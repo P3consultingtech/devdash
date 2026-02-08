@@ -8,14 +8,19 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
-    "lint": "echo 'no lint configured'",
-    "clean": "rimraf dist"
+    "lint": "eslint src/",
+    "clean": "rimraf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.4",
+    "rimraf": "^6.0.0",
     "typescript": "^5.7.0",
-    "rimraf": "^6.0.0"
+    "vitest": "^3.0.0"
   }
 }

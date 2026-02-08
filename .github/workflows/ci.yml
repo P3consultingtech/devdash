@@ -1,5 +1,4 @@
 name: CI
-
 on:
   push:
     branches: [main]
@@ -7,30 +6,22 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-typecheck:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-
       - run: pnpm install --frozen-lockfile
-
-      - name: Build shared package
-        run: pnpm --filter @devdash/shared build
-
-      - name: Generate Prisma Client
-        run: pnpm --filter @devdash/api exec prisma generate
-
-      - name: Type check
+      - run: pnpm build --filter @devdash/shared
+      - name: Type Check
         run: pnpm type-check
-
-      - name: Format check
+      - name: Lint
+        run: pnpm lint
+      - name: Format Check
         run: pnpm format:check
+      - name: Test
+        run: pnpm test

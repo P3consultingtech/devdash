@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/index.ts | pino-pretty",
     "build": "tsc",
     "start": "node dist/index.js",
     "type-check": "tsc --noEmit",
-    "lint": "echo 'no lint configured'"
+    "lint": "eslint src/",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@devdash/shared": "workspace:*",
@@ -17,9 +19,11 @@
     "dotenv": "^16.4.0",
     "express": "^5.0.1",
     "express-rate-limit": "^7.5.0",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "pdfkit": "^0.16.0",
+    "pino": "^9.6.0",
     "zod": "^3.24.0"
   },
   "devDependencies": {
@@ -28,12 +32,14 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/multer": "^1.4.12",
-    "@types/pdfkit": "^0.13.5",
     "@types/node": "^22.0.0",
+    "@types/pdfkit": "^0.13.5",
+    "pino-pretty": "^13.0.0",
     "prisma": "^6.0.0",
     "rimraf": "^6.0.0",
     "tsx": "^4.19.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
