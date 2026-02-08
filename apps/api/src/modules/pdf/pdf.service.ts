@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import PDFDocument from 'pdfkit';
 import { prisma } from '../../config/database';
 import { formatCurrency } from '../../utils/italian-tax';
@@ -18,8 +20,16 @@ export async function generateInvoicePdf(userId: string, invoice: any): Promise<
     const pageWidth = doc.page.width - 100; // margins
 
     // --- HEADER ---
-    doc.fontSize(20).font('Helvetica-Bold').text('FATTURA', 50, 50);
-    doc.fontSize(10).font('Helvetica').text(invoice.number, 50, 75);
+    let headerLeft = 50;
+    if (businessProfile?.logoUrl) {
+      const logoPath = path.resolve(__dirname, '../../../', businessProfile.logoUrl.replace(/^\//, ''));
+      if (fs.existsSync(logoPath)) {
+        doc.image(logoPath, 50, 40, { width: 60, height: 60 });
+        headerLeft = 120;
+      }
+    }
+    doc.fontSize(20).font('Helvetica-Bold').text('FATTURA', headerLeft, 50);
+    doc.fontSize(10).font('Helvetica').text(invoice.number, headerLeft, 75);
 
     // Business info (right side)
     const rightCol = 350;

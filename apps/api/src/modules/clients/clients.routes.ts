@@ -8,6 +8,7 @@ const router = Router();
 
 router.use(authenticate);
 
+router.get('/export', controller.exportCsv);
 router.get('/', validate(clientListQuerySchema, 'query'), controller.list);
 router.get('/:id', controller.getById);
 router.post('/', validate(createClientSchema), controller.create);

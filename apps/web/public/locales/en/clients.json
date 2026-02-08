@@ -30,5 +30,6 @@
   "recentInvoices": "Recent Invoices",
   "created": "Client created successfully",
   "updated": "Client updated successfully",
-  "deleted": "Client deleted successfully"
+  "deleted": "Client deleted successfully",
+  "exportCsv": "Export CSV"
 }

@@ -24,7 +24,10 @@
 - **Gestione Clienti** — CRUD completo con dati fiscali italiani (P.IVA, Codice Fiscale, Codice Destinatario SDI, PEC)
 - **Gestione Fatture** — Numerazione progressiva automatica (`FT-1/2026`), workflow di stato (Bozza → Inviata → Pagata / Scaduta → Annullata)
 - **Motore Fiscale Italiano** — Calcolo automatico di IVA, ritenuta d'acconto, cassa previdenziale, bollo virtuale. Importi in centesimi per evitare errori floating-point
-- **Generazione PDF** — Fatture professionali con header azienda, dati cliente, tabella righe, riepilogo fiscale completo e IBAN
+- **Generazione PDF** — Fatture professionali con logo aziendale, header azienda, dati cliente, tabella righe, riepilogo fiscale completo e IBAN
+- **Logo Azienda** — Upload del logo dall'area impostazioni, visualizzato automaticamente nel PDF delle fatture
+- **Scadenza Automatica** — Le fatture inviate vengono marcate come "Scaduta" automaticamente quando superano la data di scadenza
+- **Export CSV** — Esporta la lista clienti e fatture in formato CSV compatibile con Excel
 - **Dashboard & Analytics** — KPI, grafico fatturato mensile, fatture per stato, top clienti, attività recente (Recharts)
 - **Multi-lingua** — Italiano e Inglese dal giorno uno (i18n con 6 namespace)
 - **Dark Mode** — Tema chiaro, scuro e automatico di sistema
@@ -141,10 +144,10 @@ Base URL: `/api/v1`
 | Modulo | Endpoints |
 |--------|-----------|
 | **Auth** | `POST register, login, refresh, logout` · `GET me` |
-| **Clients** | `GET list` (paginato, filtri, search) · `GET :id` · `POST` · `PUT :id` · `DELETE :id` (soft) |
-| **Invoices** | `GET list` · `GET :id` · `POST` · `PUT :id` (solo DRAFT) · `DELETE :id` (solo DRAFT) · `PATCH :id/status` · `POST :id/duplicate` · `GET :id/pdf` · `GET next-number` |
+| **Clients** | `GET list` (paginato, filtri, search) · `GET :id` · `POST` · `PUT :id` · `DELETE :id` (soft) · `GET export` (CSV) |
+| **Invoices** | `GET list` · `GET :id` · `POST` · `PUT :id` (solo DRAFT) · `DELETE :id` (solo DRAFT) · `PATCH :id/status` · `POST :id/duplicate` · `GET :id/pdf` · `GET next-number` · `GET export` (CSV) |
 | **Dashboard** | `GET summary, revenue, invoices-by-status, top-clients, recent-activity` |
-| **Settings** | `GET/PUT profile, business, preferences` |
+| **Settings** | `GET/PUT profile, business, preferences` · `POST logo` · `DELETE logo` |
 
 Consulta la [documentazione API completa](docs/API.md) per i dettagli.
 

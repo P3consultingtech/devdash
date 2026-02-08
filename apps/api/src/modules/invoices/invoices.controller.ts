@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import * as invoicesService from './invoices.service';
 import { generateInvoicePdf } from '../pdf/pdf.service';
+import { toCsv } from '../../utils/csv';
+import { formatCurrency } from '../../utils/italian-tax';
 
 export async function list(req: Request, res: Response) {
   const result = await invoicesService.listInvoices(req.userId!, req.query as any);
@@ -40,6 +42,28 @@ export async function duplicate(req: Request, res: Response) {
 export async function getNextNumber(req: Request, res: Response) {
   const nextNumber = await invoicesService.getNextInvoiceNumber(req.userId!);
   res.json({ success: true, data: nextNumber });
+}
+
+export async function exportCsv(req: Request, res: Response) {
+  const invoices = await invoicesService.exportInvoices(req.userId!);
+
+  const headers = ['Numero', 'Cliente', 'Stato', 'Data Emissione', 'Data Scadenza', 'Imponibile', 'IVA', 'Totale', 'Netto a Pagare'];
+  const rows = invoices.map((inv) => [
+    inv.number,
+    inv.client.name,
+    inv.status,
+    new Date(inv.issueDate).toLocaleDateString('it-IT'),
+    new Date(inv.dueDate).toLocaleDateString('it-IT'),
+    formatCurrency(inv.subtotal, 'it'),
+    formatCurrency(inv.ivaAmount, 'it'),
+    formatCurrency(inv.grossTotal, 'it'),
+    formatCurrency(inv.netPayable, 'it'),
+  ]);
+
+  const csv = toCsv(headers, rows);
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="fatture.csv"');
+  res.send('\uFEFF' + csv);
 }
 
 export async function downloadPdf(req: Request, res: Response) {

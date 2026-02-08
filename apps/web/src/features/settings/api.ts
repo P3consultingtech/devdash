@@ -30,3 +30,17 @@ export async function updateSettingsApi(data: UpdateUserSettingsInput) {
   const res = await apiClient.put<ApiResponse<any>>('/settings/preferences', data);
   return res.data.data!;
 }
+
+export async function uploadLogoApi(file: File) {
+  const formData = new FormData();
+  formData.append('logo', file);
+  const res = await apiClient.post<ApiResponse<any>>('/settings/logo', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data.data!;
+}
+
+export async function deleteLogoApi() {
+  const res = await apiClient.delete<ApiResponse<any>>('/settings/logo');
+  return res.data.data!;
+}

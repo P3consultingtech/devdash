@@ -29,6 +29,12 @@
     "phone": "Telefono",
     "email": "Email",
     "iban": "IBAN",
+    "logo": "Logo Azienda",
+    "logoUpload": "Carica logo",
+    "logoDelete": "Rimuovi logo",
+    "logoHint": "PNG, JPG, SVG o WebP. Max 2MB.",
+    "logoUploaded": "Logo caricato",
+    "logoDeleted": "Logo rimosso",
     "saved": "Informazioni azienda aggiornate"
   },
   "invoiceDefaults": {

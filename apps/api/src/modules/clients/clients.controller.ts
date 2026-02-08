@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as clientsService from './clients.service';
+import { toCsv } from '../../utils/csv';
 
 export async function list(req: Request, res: Response) {
   const result = await clientsService.listClients(req.userId!, req.query as any);
@@ -24,4 +25,30 @@ export async function update(req: Request, res: Response) {
 export async function remove(req: Request, res: Response) {
   await clientsService.deleteClient(req.userId!, req.params.id as string);
   res.json({ success: true });
+}
+
+export async function exportCsv(req: Request, res: Response) {
+  const clients = await clientsService.exportClients(req.userId!);
+
+  const headers = ['Nome', 'Tipo', 'Email', 'Telefono', 'P.IVA', 'C.F.', 'PEC', 'Cod. Destinatario', 'Indirizzo', 'Città', 'Prov.', 'CAP', 'Paese'];
+  const rows = clients.map((c) => [
+    c.name,
+    c.type,
+    c.email || '',
+    c.phone || '',
+    c.partitaIva || '',
+    c.codiceFiscale || '',
+    c.pec || '',
+    c.codiceDestinatario || '',
+    c.street || '',
+    c.city || '',
+    c.province || '',
+    c.postalCode || '',
+    c.country || '',
+  ]);
+
+  const csv = toCsv(headers, rows);
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', 'attachment; filename="clienti.csv"');
+  res.send('\uFEFF' + csv); // BOM for Excel UTF-8 compatibility
 }

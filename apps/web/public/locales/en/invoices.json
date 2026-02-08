@@ -58,5 +58,6 @@
   "updated": "Invoice updated successfully",
   "deleted": "Invoice deleted successfully",
   "statusUpdated": "Invoice status updated",
-  "duplicated": "Invoice duplicated successfully"
+  "duplicated": "Invoice duplicated successfully",
+  "exportCsv": "Export CSV"
 }

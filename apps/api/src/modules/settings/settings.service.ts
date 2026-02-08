@@ -72,6 +72,14 @@ export async function updateBusinessProfile(userId: string, input: UpdateBusines
   });
 }
 
+export async function updateLogoUrl(userId: string, logoUrl: string | null) {
+  return prisma.businessProfile.upsert({
+    where: { userId },
+    update: { logoUrl },
+    create: { userId, businessName: '', logoUrl },
+  });
+}
+
 export async function getSettings(userId: string) {
   let settings = await prisma.userSettings.findUnique({ where: { userId } });
   if (!settings) {

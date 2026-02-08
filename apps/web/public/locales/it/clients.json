@@ -30,5 +30,6 @@
   "recentInvoices": "Fatture Recenti",
   "created": "Cliente creato con successo",
   "updated": "Cliente aggiornato con successo",
-  "deleted": "Cliente eliminato con successo"
+  "deleted": "Cliente eliminato con successo",
+  "exportCsv": "Esporta CSV"
 }

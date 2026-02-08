@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useUiStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
-import { getProfileApi, updateProfileApi, getBusinessProfileApi, updateBusinessProfileApi, getSettingsApi, updateSettingsApi } from '../api';
+import { getProfileApi, updateProfileApi, getBusinessProfileApi, updateBusinessProfileApi, getSettingsApi, updateSettingsApi, uploadLogoApi, deleteLogoApi } from '../api';
 import { toast } from 'sonner';
 import i18n from '@/lib/i18n';
 
@@ -71,6 +71,7 @@ function BusinessTab() {
   const { t } = useTranslation('settings');
   const { t: tc } = useTranslation('common');
   const queryClient = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: bp } = useQuery({ queryKey: ['business-profile'], queryFn: getBusinessProfileApi });
 
   const { register, handleSubmit, reset } = useForm<UpdateBusinessProfileInput>({
@@ -103,10 +104,82 @@ function BusinessTab() {
     },
   });
 
+  const uploadLogoMutation = useMutation({
+    mutationFn: uploadLogoApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['business-profile'] });
+      toast.success(t('business.logoUploaded'));
+    },
+  });
+
+  const deleteLogoMutation = useMutation({
+    mutationFn: deleteLogoApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['business-profile'] });
+      toast.success(t('business.logoDeleted'));
+    },
+  });
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadLogoMutation.mutate(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <Card>
       <CardHeader><CardTitle>{t('business.title')}</CardTitle></CardHeader>
       <CardContent>
+        {/* Logo Upload */}
+        <div className="mb-6 space-y-2">
+          <Label>{t('business.logo')}</Label>
+          <div className="flex items-center gap-4">
+            {bp?.logoUrl ? (
+              <img
+                src={bp.logoUrl}
+                alt="Logo"
+                className="h-16 w-16 rounded-md border object-contain"
+              />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-md border bg-muted text-muted-foreground text-xs">
+                Logo
+              </div>
+            )}
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadLogoMutation.isPending}
+                >
+                  {t('business.logoUpload')}
+                </Button>
+                {bp?.logoUrl && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => deleteLogoMutation.mutate()}
+                    disabled={deleteLogoMutation.isPending}
+                  >
+                    {t('business.logoDelete')}
+                  </Button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">{t('business.logoHint')}</p>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".png,.jpg,.jpeg,.svg,.webp"
+              className="hidden"
+              onChange={handleLogoChange}
+            />
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
           <div className="space-y-2">
             <Label>{t('business.businessName')}</Label>

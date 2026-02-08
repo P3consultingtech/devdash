@@ -41,6 +41,20 @@ Each feature (auth, clients, invoices, dashboard, settings) contains:
 - `api.ts` - API calls
 - Optional `components/`, `hooks/`
 
+### Auto-Overdue Invoices
+
+SENT invoices past their `dueDate` are automatically marked as OVERDUE via:
+- A check that runs before every `listInvoices` query (ensures fresh data on page load)
+- A background hourly `setInterval` in the API server (catches overdue invoices without user interaction)
+
+### CSV Export
+
+Both clients and invoices can be exported as CSV files (`GET /clients/export`, `GET /invoices/export`). Files include a UTF-8 BOM for Excel compatibility.
+
+### Company Logo
+
+Users can upload a company logo (max 2MB, PNG/JPG/SVG/WebP) which is stored in `uploads/logos/`. When present, the logo is rendered in the PDF invoice header.
+
 ### Shared Validation
 
 Zod schemas in `packages/shared` are used on both frontend (react-hook-form) and backend (Express middleware).

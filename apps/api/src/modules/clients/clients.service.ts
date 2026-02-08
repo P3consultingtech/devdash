@@ -90,6 +90,13 @@ export async function updateClient(userId: string, id: string, input: CreateClie
   });
 }
 
+export async function exportClients(userId: string) {
+  return prisma.client.findMany({
+    where: { userId, isDeleted: false },
+    orderBy: { name: 'asc' },
+  });
+}
+
 export async function deleteClient(userId: string, id: string) {
   const client = await prisma.client.findFirst({ where: { id, userId, isDeleted: false } });
   if (!client) throw new AppError(404, 'NOT_FOUND', 'Client not found');

@@ -1,6 +1,21 @@
 import { Request, Response } from 'express';
 import * as settingsService from './settings.service';
 
+export async function uploadLogo(req: Request, res: Response) {
+  if (!req.file) {
+    res.status(400).json({ success: false, error: { code: 'NO_FILE', message: 'No file uploaded' } });
+    return;
+  }
+  const logoUrl = `/uploads/logos/${req.file.filename}`;
+  const bp = await settingsService.updateLogoUrl(req.userId!, logoUrl);
+  res.json({ success: true, data: bp });
+}
+
+export async function deleteLogo(req: Request, res: Response) {
+  const bp = await settingsService.updateLogoUrl(req.userId!, null);
+  res.json({ success: true, data: bp });
+}
+
 export async function getProfile(req: Request, res: Response) {
   const profile = await settingsService.getProfile(req.userId!);
   res.json({ success: true, data: profile });

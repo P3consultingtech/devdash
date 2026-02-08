@@ -8,6 +8,7 @@ const router = Router();
 
 router.use(authenticate);
 
+router.get('/export', controller.exportCsv);
 router.get('/next-number', controller.getNextNumber);
 router.get('/', validate(invoiceListQuerySchema, 'query'), controller.list);
 router.get('/:id', controller.getById);

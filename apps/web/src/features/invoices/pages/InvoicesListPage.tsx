@@ -63,6 +63,19 @@ export function InvoicesListPage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportCsv = async () => {
+    const res = await fetch('/api/v1/invoices/export', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'fatture.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const invoices = data?.data ?? [];
   const pagination = data?.pagination;
 
@@ -70,9 +83,14 @@ export function InvoicesListPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Link to="/invoices/new">
-          <Button><Plus className="h-4 w-4" /> {t('addInvoice')}</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExportCsv}>
+            <Download className="h-4 w-4" /> {t('exportCsv')}
+          </Button>
+          <Link to="/invoices/new">
+            <Button><Plus className="h-4 w-4" /> {t('addInvoice')}</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">

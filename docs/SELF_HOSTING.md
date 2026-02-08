@@ -10,7 +10,7 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/devdash.git
+git clone https://github.com/P3consultingtech/devdash.git
 cd devdash/docker
 ```
 

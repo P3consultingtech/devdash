@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Search, MoreHorizontal, Eye, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Search, MoreHorizontal, Eye, Pencil, Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useAuthStore } from '@/stores/auth-store';
 import { listClientsApi, deleteClientApi } from '../api';
 import { toast } from 'sonner';
 
@@ -16,6 +17,7 @@ export function ClientsListPage() {
   const { t } = useTranslation('clients');
   const { t: tc } = useTranslation('common');
   const queryClient = useQueryClient();
+  const accessToken = useAuthStore((s) => s.accessToken);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search);
@@ -33,6 +35,19 @@ export function ClientsListPage() {
     },
   });
 
+  const handleExportCsv = async () => {
+    const res = await fetch('/api/v1/clients/export', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'clienti.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const clients = data?.data ?? [];
   const pagination = data?.pagination;
 
@@ -40,9 +55,14 @@ export function ClientsListPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <Link to="/clients/new">
-          <Button><Plus className="h-4 w-4" /> {t('addClient')}</Button>
-        </Link>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExportCsv}>
+            <Download className="h-4 w-4" /> {t('exportCsv')}
+          </Button>
+          <Link to="/clients/new">
+            <Button><Plus className="h-4 w-4" /> {t('addClient')}</Button>
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">

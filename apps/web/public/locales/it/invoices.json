@@ -58,5 +58,6 @@
   "updated": "Fattura aggiornata con successo",
   "deleted": "Fattura eliminata con successo",
   "statusUpdated": "Stato fattura aggiornato",
-  "duplicated": "Fattura duplicata con successo"
+  "duplicated": "Fattura duplicata con successo",
+  "exportCsv": "Esporta CSV"
 }

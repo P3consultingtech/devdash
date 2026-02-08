@@ -5,7 +5,23 @@ import { calculateInvoice, formatInvoiceNumber } from '../../utils/italian-tax';
 import type { CreateInvoiceInput, InvoiceListQuery, InvoiceStatus } from '@devdash/shared';
 import { Prisma } from '@prisma/client';
 
+export async function markOverdueInvoices(userId?: string) {
+  const where: Prisma.InvoiceWhereInput = {
+    status: 'SENT',
+    dueDate: { lt: new Date() },
+    ...(userId && { userId }),
+  };
+  const { count } = await prisma.invoice.updateMany({
+    where,
+    data: { status: 'OVERDUE' },
+  });
+  return count;
+}
+
 export async function listInvoices(userId: string, query: InvoiceListQuery) {
+  // Mark overdue invoices before listing
+  await markOverdueInvoices(userId);
+
   const { page, limit, status, clientId, search, fromDate, toDate, sortBy, sortOrder } = query;
   const { skip, take } = getPaginationParams(page, limit);
 
@@ -273,6 +289,14 @@ export async function duplicateInvoice(userId: string, id: string) {
       },
       include: { client: true, items: { orderBy: { sortOrder: 'asc' } } },
     });
+  });
+}
+
+export async function exportInvoices(userId: string) {
+  return prisma.invoice.findMany({
+    where: { userId },
+    include: { client: { select: { name: true } } },
+    orderBy: { issueDate: 'desc' },
   });
 }
 

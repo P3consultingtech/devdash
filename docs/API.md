@@ -60,6 +60,9 @@ Returns current user profile.
 ### GET /clients
 Query params: `page`, `limit`, `search`, `type`, `sortBy`, `sortOrder`
 
+### GET /clients/export
+Returns CSV file with all clients. Response: `text/csv`.
+
 ### GET /clients/:id
 ### POST /clients
 ### PUT /clients/:id
@@ -88,11 +91,16 @@ Valid transitions: DRAFT->SENT/CANCELLED, SENT->PAID/OVERDUE/CANCELLED, OVERDUE-
 ### POST /invoices/:id/duplicate
 Creates a new DRAFT invoice as a copy.
 
+### GET /invoices/export
+Returns CSV file with all invoices. Response: `text/csv`.
+
 ### GET /invoices/:id/pdf
 Returns PDF binary.
 
 ### GET /invoices/next-number
 Returns the next available invoice number.
+
+> **Note:** SENT invoices past their due date are automatically marked as OVERDUE. This check runs every hour and also on every invoice list request.
 
 ## Dashboard
 
@@ -108,5 +116,11 @@ Returns the next available invoice number.
 ### PUT /settings/profile
 ### GET /settings/business
 ### PUT /settings/business
+### POST /settings/logo
+Upload company logo. `multipart/form-data` with field `logo`. Max 2MB, accepted formats: PNG, JPG, JPEG, SVG, WebP.
+
+### DELETE /settings/logo
+Remove company logo.
+
 ### GET /settings/preferences
 ### PUT /settings/preferences
