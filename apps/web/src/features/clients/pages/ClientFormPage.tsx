@@ -10,7 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { createClientApi, updateClientApi, getClientApi } from '../api';
 import { toast } from 'sonner';
 
@@ -28,7 +34,14 @@ export function ClientFormPage() {
     enabled: isEditing,
   });
 
-  const { register, handleSubmit, watch, setValue, reset, formState: { errors, isSubmitting } } = useForm<CreateClientInput>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateClientInput>({
     resolver: zodResolver(createClientSchema),
     defaultValues: { type: 'BUSINESS', country: 'IT' },
   });
@@ -73,12 +86,16 @@ export function ClientFormPage() {
       <form onSubmit={handleSubmit((data) => createMutation.mutate(data))}>
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
-            <CardHeader><CardTitle>{t('fields.name')}</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>{t('fields.name')}</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>{t('fields.type')}</Label>
                 <Select value={clientType} onValueChange={(v: any) => setValue('type', v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="BUSINESS">{t('types.BUSINESS')}</SelectItem>
                     <SelectItem value="FREELANCER">{t('types.FREELANCER')}</SelectItem>
@@ -103,13 +120,17 @@ export function ClientFormPage() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>Dati Fiscali</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>{t('taxData')}</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4">
               {(clientType === 'BUSINESS' || clientType === 'FREELANCER') && (
                 <div className="space-y-2">
                   <Label>{t('fields.partitaIva')}</Label>
                   <Input {...register('partitaIva')} maxLength={11} />
-                  {errors.partitaIva && <p className="text-xs text-destructive">{errors.partitaIva.message}</p>}
+                  {errors.partitaIva && (
+                    <p className="text-xs text-destructive">{errors.partitaIva.message}</p>
+                  )}
                 </div>
               )}
               <div className="space-y-2">
@@ -128,7 +149,9 @@ export function ClientFormPage() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>{t('fields.street')}</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>{t('fields.street')}</CardTitle>
+            </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>{t('fields.street')}</Label>
@@ -158,7 +181,9 @@ export function ClientFormPage() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>{t('fields.notes')}</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>{t('fields.notes')}</CardTitle>
+            </CardHeader>
             <CardContent>
               <Textarea {...register('notes')} rows={4} />
             </CardContent>

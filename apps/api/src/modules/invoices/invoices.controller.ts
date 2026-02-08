@@ -59,7 +59,7 @@ export async function updateStatus(req: Request, res: Response) {
     action: 'STATUS_CHANGE',
     entity: 'Invoice',
     entityId: invoice.id,
-    details: { to: req.body.status },
+    details: { from: invoice.previousStatus, to: req.body.status },
     ipAddress: req.ip,
   });
   res.json({ success: true, data: invoice });

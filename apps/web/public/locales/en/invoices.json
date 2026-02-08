@@ -59,5 +59,12 @@
   "deleted": "Invoice deleted successfully",
   "statusUpdated": "Invoice status updated",
   "duplicated": "Invoice duplicated successfully",
-  "exportCsv": "Export CSV"
+  "exportCsv": "Export CSV",
+  "selectClient": "Select client...",
+  "unitPriceCents": "Cents",
+  "taxSettings": "Taxes",
+  "summary": "Summary",
+  "revertToDraft": "Revert to Draft",
+  "downloadError": "Error downloading PDF",
+  "exportError": "Error exporting CSV"
 }

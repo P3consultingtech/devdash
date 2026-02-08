@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -13,6 +14,16 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { formatCurrency, formatDate } from '@/lib/format';
 import { DetailSkeleton } from '@/components/shared/DetailSkeleton';
@@ -29,6 +40,7 @@ import type { InvoiceStatus } from '@devdash/shared';
 export function InvoiceDetailPage() {
   const { t } = useTranslation('invoices');
   const { t: tc } = useTranslation('common');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -67,25 +79,36 @@ export function InvoiceDetailPage() {
   });
 
   const handleDownloadPdf = async () => {
-    const res = await fetch(`/api/v1/invoices/${id}/pdf`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${invoice.number.replace('/', '-')}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const res = await fetch(`/api/v1/invoices/${id}/pdf`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) throw new Error(res.statusText);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${invoice.number.replace('/', '-')}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t('downloadError'));
+    }
   };
 
   if (isLoading) return <DetailSkeleton />;
-  if (!invoice) return <div className="py-10 text-center">Not found</div>;
+  if (!invoice)
+    return <div className="py-10 text-center text-muted-foreground">{tc('noResults')}</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4 flex-wrap">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/invoices')}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={tc('back')}
+          onClick={() => navigate('/invoices')}
+        >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold">{invoice.number}</h1>
@@ -104,14 +127,26 @@ export function InvoiceDetailPage() {
                   <Pencil className="h-4 w-4" /> {tc('edit')}
                 </Button>
               </Link>
-              <Button
-                variant="destructive"
-                onClick={() => {
-                  if (confirm(t('deleteConfirm'))) deleteMutation.mutate();
-                }}
-              >
+              <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
+              <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{tc('deleteConfirm.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('deleteConfirm')}</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
+                    <AlertDialogAction
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      onClick={() => deleteMutation.mutate()}
+                    >
+                      {tc('delete')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </>
           )}
         </div>
@@ -151,7 +186,7 @@ export function InvoiceDetailPage() {
           )}
           {invoice.status === 'CANCELLED' && (
             <Button size="sm" variant="outline" onClick={() => statusMutation.mutate('DRAFT')}>
-              Riporta a Bozza
+              {t('revertToDraft')}
             </Button>
           )}
         </CardContent>
@@ -216,7 +251,7 @@ export function InvoiceDetailPage() {
         {/* Totals */}
         <Card>
           <CardHeader>
-            <CardTitle>Riepilogo</CardTitle>
+            <CardTitle>{t('summary')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between text-sm">

@@ -21,6 +21,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAuthStore } from '@/stores/auth-store';
 import { listClientsApi, deleteClientApi } from '../api';
@@ -33,6 +43,7 @@ export function ClientsListPage() {
   const accessToken = useAuthStore((s) => s.accessToken);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search);
 
   const { data, isLoading } = useQuery({
@@ -49,16 +60,21 @@ export function ClientsListPage() {
   });
 
   const handleExportCsv = async () => {
-    const res = await fetch('/api/v1/clients/export', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'clienti.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const res = await fetch('/api/v1/clients/export', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) throw new Error(res.statusText);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'clienti.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t('exportError'));
+    }
   };
 
   const clients = data?.data ?? [];
@@ -127,7 +143,7 @@ export function ClientsListPage() {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" aria-label={tc('actions')}>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -144,9 +160,7 @@ export function ClientsListPage() {
                         </Link>
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => {
-                            if (confirm(t('deleteConfirm'))) deleteMutation.mutate(client.id);
-                          }}
+                          onClick={() => setDeleteId(client.id)}
                         >
                           <Trash2 className="h-4 w-4" /> {tc('delete')}
                         </DropdownMenuItem>
@@ -186,6 +200,26 @@ export function ClientsListPage() {
           )}
         </>
       )}
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{tc('deleteConfirm.title')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('deleteConfirm')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteId) deleteMutation.mutate(deleteId);
+                setDeleteId(null);
+              }}
+            >
+              {tc('delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

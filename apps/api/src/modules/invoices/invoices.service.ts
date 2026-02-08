@@ -224,11 +224,14 @@ export async function updateInvoiceStatus(userId: string, id: string, newStatus:
     );
   }
 
-  return prisma.invoice.update({
+  const previousStatus = invoice.status;
+  const updated = await prisma.invoice.update({
     where: { id },
     data: { status: newStatus },
     include: { client: { select: { id: true, name: true } } },
   });
+
+  return { ...updated, previousStatus };
 }
 
 export async function duplicateInvoice(userId: string, id: string) {

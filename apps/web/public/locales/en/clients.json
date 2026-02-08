@@ -31,5 +31,15 @@
   "created": "Client created successfully",
   "updated": "Client updated successfully",
   "deleted": "Client deleted successfully",
-  "exportCsv": "Export CSV"
+  "exportCsv": "Export CSV",
+  "taxData": "Tax Information",
+  "contactInfo": "Contact Info",
+  "address": "Address",
+  "invoicesTable": {
+    "number": "#",
+    "date": "Date",
+    "status": "Status",
+    "amount": "Amount"
+  },
+  "exportError": "Error exporting CSV"
 }

@@ -5,13 +5,24 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2 } from 'lucide-react';
-import { createInvoiceSchema, type CreateInvoiceInput, calculateInvoice, formatCurrency } from '@devdash/shared';
+import {
+  createInvoiceSchema,
+  type CreateInvoiceInput,
+  calculateInvoice,
+  formatCurrency,
+} from '@devdash/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { listClientsApi } from '@/features/clients/api';
 import { createInvoiceApi, updateInvoiceApi, getInvoiceApi } from '../api';
@@ -37,7 +48,15 @@ export function InvoiceFormPage() {
     queryFn: () => listClientsApi({ limit: 100 }),
   });
 
-  const { register, handleSubmit, watch, setValue, control, reset, formState: { errors, isSubmitting } } = useForm<CreateInvoiceInput>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateInvoiceInput>({
     resolver: zodResolver(createInvoiceSchema),
     defaultValues: {
       items: [{ description: '', quantity: 1, unitPriceCents: 0 }],
@@ -124,15 +143,24 @@ export function InvoiceFormPage() {
               <CardContent className="pt-6 space-y-4">
                 <div className="space-y-2">
                   <Label>{t('fields.client')}</Label>
-                  <Select value={watch('clientId') || ''} onValueChange={(v) => setValue('clientId', v)}>
-                    <SelectTrigger><SelectValue placeholder="Seleziona cliente..." /></SelectTrigger>
+                  <Select
+                    value={watch('clientId') || ''}
+                    onValueChange={(v) => setValue('clientId', v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('selectClient')} />
+                    </SelectTrigger>
                     <SelectContent>
                       {clients.map((c: any) => (
-                        <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {errors.clientId && <p className="text-xs text-destructive">{errors.clientId.message}</p>}
+                  {errors.clientId && (
+                    <p className="text-xs text-destructive">{errors.clientId.message}</p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -149,7 +177,9 @@ export function InvoiceFormPage() {
 
             {/* Line Items */}
             <Card>
-              <CardHeader><CardTitle>{t('items.title')}</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>{t('items.title')}</CardTitle>
+              </CardHeader>
               <CardContent className="space-y-4">
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex gap-3 items-start">
@@ -171,13 +201,16 @@ export function InvoiceFormPage() {
                       <Input
                         type="number"
                         step="1"
-                        placeholder="Centesimi"
+                        placeholder={t('unitPriceCents')}
                         {...register(`items.${index}.unitPriceCents`, { valueAsNumber: true })}
                       />
                     </div>
                     <div className="w-28 pt-2 text-sm text-right font-medium">
                       {formatCurrency(
-                        Math.round((Number(watchedItems?.[index]?.quantity) || 0) * (Number(watchedItems?.[index]?.unitPriceCents) || 0)),
+                        Math.round(
+                          (Number(watchedItems?.[index]?.quantity) || 0) *
+                            (Number(watchedItems?.[index]?.unitPriceCents) || 0),
+                        ),
                         'it',
                       )}
                     </div>
@@ -185,6 +218,7 @@ export function InvoiceFormPage() {
                       type="button"
                       variant="ghost"
                       size="icon"
+                      aria-label={tc('delete')}
                       disabled={fields.length <= 1}
                       onClick={() => remove(index)}
                     >
@@ -220,44 +254,75 @@ export function InvoiceFormPage() {
           {/* Tax Settings & Summary */}
           <div className="space-y-6">
             <Card>
-              <CardHeader><CardTitle>Tasse</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>{t('taxSettings')}</CardTitle>
+              </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label>{t('fields.ivaRate')}</Label>
-                  <Input type="number" step="0.01" {...register('ivaRate', { valueAsNumber: true })} />
+                  <Input
+                    type="number"
+                    step="0.01"
+                    {...register('ivaRate', { valueAsNumber: true })}
+                  />
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" id="applyRitenuta" {...register('applyRitenuta')} className="rounded" />
+                  <input
+                    type="checkbox"
+                    id="applyRitenuta"
+                    {...register('applyRitenuta')}
+                    className="rounded"
+                  />
                   <Label htmlFor="applyRitenuta">{t('taxOptions.applyRitenuta')}</Label>
                 </div>
                 {applyRitenuta && (
                   <div className="space-y-2">
                     <Label>{t('fields.ritenutaRate')}</Label>
-                    <Input type="number" step="0.01" {...register('ritenutaRate', { valueAsNumber: true })} />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      {...register('ritenutaRate', { valueAsNumber: true })}
+                    />
                   </div>
                 )}
 
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" id="applyCassa" {...register('applyCassa')} className="rounded" />
+                  <input
+                    type="checkbox"
+                    id="applyCassa"
+                    {...register('applyCassa')}
+                    className="rounded"
+                  />
                   <Label htmlFor="applyCassa">{t('taxOptions.applyCassa')}</Label>
                 </div>
                 {applyCassa && (
                   <div className="space-y-2">
                     <Label>{t('fields.cassaRate')}</Label>
-                    <Input type="number" step="0.01" {...register('cassaRate', { valueAsNumber: true })} />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      {...register('cassaRate', { valueAsNumber: true })}
+                    />
                   </div>
                 )}
 
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" id="applyBollo" {...register('applyBollo')} className="rounded" />
+                  <input
+                    type="checkbox"
+                    id="applyBollo"
+                    {...register('applyBollo')}
+                    className="rounded"
+                  />
                   <Label htmlFor="applyBollo">{t('taxOptions.applyBollo')}</Label>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader><CardTitle>Riepilogo</CardTitle></CardHeader>
+              <CardHeader>
+                <CardTitle>{t('summary')}</CardTitle>
+              </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span>{t('fields.subtotal')}</span>
@@ -301,7 +366,11 @@ export function InvoiceFormPage() {
             </Card>
 
             <div className="flex gap-4">
-              <Button type="submit" className="flex-1" disabled={isSubmitting || createMutation.isPending}>
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={isSubmitting || createMutation.isPending}
+              >
                 {tc('save')}
               </Button>
               <Button type="button" variant="outline" onClick={() => navigate('/invoices')}>

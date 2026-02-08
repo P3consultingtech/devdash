@@ -25,6 +25,14 @@ export async function uploadLogo(req: Request, res: Response) {
 
 export async function deleteLogo(req: Request, res: Response) {
   const bp = await settingsService.updateLogoUrl(req.userId!, null);
+  audit({
+    userId: req.userId!,
+    action: 'DELETE',
+    entity: 'BusinessProfile',
+    entityId: bp.id,
+    details: { field: 'logo' },
+    ipAddress: req.ip,
+  });
   res.json({ success: true, data: bp });
 }
 

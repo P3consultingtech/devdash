@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -5,6 +6,16 @@ import { Pencil, Trash2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import {
   Table,
   TableBody,
@@ -22,6 +33,7 @@ import { toast } from 'sonner';
 export function ClientDetailPage() {
   const { t } = useTranslation('clients');
   const { t: tc } = useTranslation('common');
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -41,12 +53,18 @@ export function ClientDetailPage() {
   });
 
   if (isLoading) return <DetailSkeleton />;
-  if (!client) return <div className="py-10 text-center">Not found</div>;
+  if (!client)
+    return <div className="py-10 text-center text-muted-foreground">{tc('noResults')}</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/clients')}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={tc('back')}
+          onClick={() => navigate('/clients')}
+        >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-2xl font-bold">{client.name}</h1>
@@ -57,14 +75,26 @@ export function ClientDetailPage() {
               <Pencil className="h-4 w-4" /> {tc('edit')}
             </Button>
           </Link>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              if (confirm(t('deleteConfirm'))) deleteMutation.mutate();
-            }}
-          >
+          <Button variant="destructive" onClick={() => setShowDeleteDialog(true)}>
             <Trash2 className="h-4 w-4" /> {tc('delete')}
           </Button>
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{tc('deleteConfirm.title')}</AlertDialogTitle>
+                <AlertDialogDescription>{t('deleteConfirm')}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => deleteMutation.mutate()}
+                >
+                  {tc('delete')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -90,7 +120,7 @@ export function ClientDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Dati Fiscali</CardTitle>
+            <CardTitle>{t('taxData')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div>
@@ -140,10 +170,10 @@ export function ClientDetailPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>#</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Stato</TableHead>
-                  <TableHead className="text-right">Importo</TableHead>
+                  <TableHead>{t('invoicesTable.number')}</TableHead>
+                  <TableHead>{t('invoicesTable.date')}</TableHead>
+                  <TableHead>{t('invoicesTable.status')}</TableHead>
+                  <TableHead className="text-right">{t('invoicesTable.amount')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

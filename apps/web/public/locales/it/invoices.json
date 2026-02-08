@@ -59,5 +59,12 @@
   "deleted": "Fattura eliminata con successo",
   "statusUpdated": "Stato fattura aggiornato",
   "duplicated": "Fattura duplicata con successo",
-  "exportCsv": "Esporta CSV"
+  "exportCsv": "Esporta CSV",
+  "selectClient": "Seleziona cliente...",
+  "unitPriceCents": "Centesimi",
+  "taxSettings": "Tasse",
+  "summary": "Riepilogo",
+  "revertToDraft": "Riporta a Bozza",
+  "downloadError": "Errore durante il download del PDF",
+  "exportError": "Errore durante l'esportazione CSV"
 }

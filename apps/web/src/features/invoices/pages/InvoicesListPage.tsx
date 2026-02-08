@@ -28,6 +28,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { useDebounce } from '@/hooks/useDebounce';
 import { formatCurrency, formatDate } from '@/lib/format';
@@ -43,6 +53,7 @@ export function InvoicesListPage() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string>('');
   const [page, setPage] = useState(1);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const debouncedSearch = useDebounce(search);
 
   const { data, isLoading } = useQuery({
@@ -72,29 +83,39 @@ export function InvoicesListPage() {
   });
 
   const handleDownloadPdf = async (id: string, number: string) => {
-    const res = await fetch(`/api/v1/invoices/${id}/pdf`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${number.replace('/', '-')}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const res = await fetch(`/api/v1/invoices/${id}/pdf`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) throw new Error(res.statusText);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${number.replace('/', '-')}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t('downloadError'));
+    }
   };
 
   const handleExportCsv = async () => {
-    const res = await fetch('/api/v1/invoices/export', {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'fatture.csv';
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const res = await fetch('/api/v1/invoices/export', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) throw new Error(res.statusText);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fatture.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t('exportError'));
+    }
   };
 
   const invoices = data?.data ?? [];
@@ -188,7 +209,7 @@ export function InvoicesListPage() {
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" aria-label={tc('actions')}>
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -216,9 +237,7 @@ export function InvoicesListPage() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => {
-                                if (confirm(t('deleteConfirm'))) deleteMutation.mutate(inv.id);
-                              }}
+                              onClick={() => setDeleteId(inv.id)}
                             >
                               <Trash2 className="h-4 w-4" /> {tc('delete')}
                             </DropdownMenuItem>
@@ -260,6 +279,26 @@ export function InvoicesListPage() {
           )}
         </>
       )}
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{tc('deleteConfirm.title')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('deleteConfirm')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tc('cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (deleteId) deleteMutation.mutate(deleteId);
+                setDeleteId(null);
+              }}
+            >
+              {tc('delete')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

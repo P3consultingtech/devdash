@@ -31,5 +31,15 @@
   "created": "Cliente creato con successo",
   "updated": "Cliente aggiornato con successo",
   "deleted": "Cliente eliminato con successo",
-  "exportCsv": "Esporta CSV"
+  "exportCsv": "Esporta CSV",
+  "taxData": "Dati Fiscali",
+  "contactInfo": "Contatti",
+  "address": "Indirizzo",
+  "invoicesTable": {
+    "number": "#",
+    "date": "Data",
+    "status": "Stato",
+    "amount": "Importo"
+  },
+  "exportError": "Errore durante l'esportazione CSV"
 }
