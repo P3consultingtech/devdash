@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 import * as invoicesService from './invoices.service';
 import { generateInvoicePdf } from '../pdf/pdf.service';
 import { toCsv } from '../../utils/csv';
-import { formatCurrency } from '../../utils/italian-tax';
+import { formatCurrency } from '@devdash/shared';
 
 export async function list(req: Request, res: Response) {
   const result = await invoicesService.listInvoices(req.userId!, req.query as any);
@@ -20,7 +20,11 @@ export async function create(req: Request, res: Response) {
 }
 
 export async function update(req: Request, res: Response) {
-  const invoice = await invoicesService.updateInvoice(req.userId!, req.params.id as string, req.body);
+  const invoice = await invoicesService.updateInvoice(
+    req.userId!,
+    req.params.id as string,
+    req.body,
+  );
   res.json({ success: true, data: invoice });
 }
 
@@ -30,7 +34,11 @@ export async function remove(req: Request, res: Response) {
 }
 
 export async function updateStatus(req: Request, res: Response) {
-  const invoice = await invoicesService.updateInvoiceStatus(req.userId!, req.params.id as string, req.body.status);
+  const invoice = await invoicesService.updateInvoiceStatus(
+    req.userId!,
+    req.params.id as string,
+    req.body.status,
+  );
   res.json({ success: true, data: invoice });
 }
 
@@ -47,7 +55,17 @@ export async function getNextNumber(req: Request, res: Response) {
 export async function exportCsv(req: Request, res: Response) {
   const invoices = await invoicesService.exportInvoices(req.userId!);
 
-  const headers = ['Numero', 'Cliente', 'Stato', 'Data Emissione', 'Data Scadenza', 'Imponibile', 'IVA', 'Totale', 'Netto a Pagare'];
+  const headers = [
+    'Numero',
+    'Cliente',
+    'Stato',
+    'Data Emissione',
+    'Data Scadenza',
+    'Imponibile',
+    'IVA',
+    'Totale',
+    'Netto a Pagare',
+  ];
   const rows = invoices.map((inv) => [
     inv.number,
     inv.client.name,
@@ -71,6 +89,9 @@ export async function downloadPdf(req: Request, res: Response) {
   const pdfBuffer = await generateInvoicePdf(req.userId!, invoice);
 
   res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename="${invoice.number.replace('/', '-')}.pdf"`);
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename="${invoice.number.replace('/', '-')}.pdf"`,
+  );
   res.send(pdfBuffer);
 }

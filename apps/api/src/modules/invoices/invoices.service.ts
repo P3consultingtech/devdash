@@ -1,9 +1,9 @@
 import { prisma } from '../../config/database';
 import { AppError } from '../../middleware/error-handler';
 import { getPaginationParams, buildPaginatedResponse } from '../../utils/pagination';
-import { calculateInvoice, formatInvoiceNumber } from '../../utils/italian-tax';
+import { calculateInvoice, formatInvoiceNumber } from '@devdash/shared';
 import type { CreateInvoiceInput, InvoiceListQuery, InvoiceStatus } from '@devdash/shared';
-import { Prisma } from '@prisma/client';
+import { type Prisma } from '@prisma/client';
 
 export async function markOverdueInvoices(userId?: string) {
   const where: Prisma.InvoiceWhereInput = {

@@ -94,6 +94,8 @@ model Client {
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   invoices Invoice[]
 
+  @@index([userId])
+  @@index([name])
   @@map("clients")
 }
 
@@ -145,6 +147,9 @@ model Invoice {
   items  InvoiceItem[]
 
   @@unique([userId, year, sequenceNumber])
+  @@index([userId, status])
+  @@index([userId, issueDate])
+  @@index([clientId])
   @@map("invoices")
 }
 

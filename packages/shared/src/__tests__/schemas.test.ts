@@ -50,10 +50,10 @@ describe('loginSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should reject password shorter than 8 characters', () => {
+  it('should reject empty password', () => {
     const result = loginSchema.safeParse({
       email: 'user@example.com',
-      password: 'short',
+      password: '',
     });
     expect(result.success).toBe(false);
   });
@@ -66,18 +66,10 @@ describe('loginSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should accept password exactly 8 characters', () => {
+  it('should accept any non-empty password up to 128 characters for login', () => {
     const result = loginSchema.safeParse({
       email: 'user@example.com',
-      password: '12345678',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('should accept password exactly 128 characters', () => {
-    const result = loginSchema.safeParse({
-      email: 'user@example.com',
-      password: 'a'.repeat(128),
+      password: 'short',
     });
     expect(result.success).toBe(true);
   });
@@ -100,14 +92,39 @@ describe('loginSchema', () => {
 describe('registerSchema', () => {
   const validRegister = {
     email: 'user@example.com',
-    password: 'password123',
+    password: 'StrongPass1!xy',
     firstName: 'Mario',
     lastName: 'Rossi',
   };
 
-  it('should accept valid registration data', () => {
+  it('should accept valid registration data with strong password', () => {
     const result = registerSchema.safeParse(validRegister);
     expect(result.success).toBe(true);
+  });
+
+  it('should reject password without uppercase', () => {
+    const result = registerSchema.safeParse({ ...validRegister, password: 'weakpassword1!' });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject password without lowercase', () => {
+    const result = registerSchema.safeParse({ ...validRegister, password: 'STRONGPASS123!' });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject password without number', () => {
+    const result = registerSchema.safeParse({ ...validRegister, password: 'StrongPasswd!!' });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject password without special character', () => {
+    const result = registerSchema.safeParse({ ...validRegister, password: 'StrongPasswd123' });
+    expect(result.success).toBe(false);
+  });
+
+  it('should reject password shorter than 12 characters', () => {
+    const result = registerSchema.safeParse({ ...validRegister, password: 'Short1!' });
+    expect(result.success).toBe(false);
   });
 
   it('should default locale to "it"', () => {
@@ -156,8 +173,8 @@ describe('registerSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should reject short password in registration', () => {
-    const result = registerSchema.safeParse({ ...validRegister, password: '1234567' });
+  it('should reject weak password in registration', () => {
+    const result = registerSchema.safeParse({ ...validRegister, password: 'weak' });
     expect(result.success).toBe(false);
   });
 });

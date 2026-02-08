@@ -5,8 +5,8 @@ import {
   validateCodiceFiscale,
   formatCurrency,
   formatInvoiceNumber,
-} from '../../utils/italian-tax';
-import type { InvoiceCalcInput } from '../../utils/italian-tax';
+} from '@devdash/shared';
+import type { InvoiceCalcInput } from '@devdash/shared';
 
 describe('Italian Tax Utilities', () => {
   describe('calculateInvoice', () => {
