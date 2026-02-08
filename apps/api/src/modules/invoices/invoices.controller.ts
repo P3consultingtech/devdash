@@ -42,7 +42,7 @@ export async function remove(req: Request, res: Response) {
     userId: req.userId!,
     action: 'DELETE',
     entity: 'Invoice',
-    entityId: req.params.id,
+    entityId: req.params.id as string,
     ipAddress: req.ip,
   });
   res.json({ success: true });

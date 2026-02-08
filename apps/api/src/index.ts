@@ -84,6 +84,14 @@ app.use('/api/v1/invoices', invoicesRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 app.use('/api/v1/settings', settingsRoutes);
 
+// 404 handler for unknown routes
+app.use('/api', (_req, res) => {
+  res.status(404).json({
+    success: false,
+    error: { code: 'NOT_FOUND', message: 'The requested endpoint does not exist' },
+  });
+});
+
 // Error handler (must be last)
 app.use(errorHandler);
 

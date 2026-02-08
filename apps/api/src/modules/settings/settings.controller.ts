@@ -1,6 +1,7 @@
 import { type Request, type Response } from 'express';
 import * as settingsService from './settings.service';
 import type { AuditLogQuery } from '@devdash/shared';
+import { audit } from '../../utils/audit';
 
 export async function uploadLogo(req: Request, res: Response) {
   if (!req.file) {
@@ -11,6 +12,14 @@ export async function uploadLogo(req: Request, res: Response) {
   }
   const logoUrl = `/uploads/logos/${req.file.filename}`;
   const bp = await settingsService.updateLogoUrl(req.userId!, logoUrl);
+  audit({
+    userId: req.userId!,
+    action: 'UPDATE',
+    entity: 'BusinessProfile',
+    entityId: bp.id,
+    details: { field: 'logo' },
+    ipAddress: req.ip,
+  });
   res.json({ success: true, data: bp });
 }
 
@@ -26,6 +35,13 @@ export async function getProfile(req: Request, res: Response) {
 
 export async function updateProfile(req: Request, res: Response) {
   const profile = await settingsService.updateProfile(req.userId!, req.body);
+  audit({
+    userId: req.userId!,
+    action: 'UPDATE',
+    entity: 'UserProfile',
+    entityId: req.userId!,
+    ipAddress: req.ip,
+  });
   res.json({ success: true, data: profile });
 }
 
@@ -36,6 +52,13 @@ export async function getBusinessProfile(req: Request, res: Response) {
 
 export async function updateBusinessProfile(req: Request, res: Response) {
   const bp = await settingsService.updateBusinessProfile(req.userId!, req.body);
+  audit({
+    userId: req.userId!,
+    action: 'UPDATE',
+    entity: 'BusinessProfile',
+    entityId: bp.id,
+    ipAddress: req.ip,
+  });
   res.json({ success: true, data: bp });
 }
 
@@ -46,6 +69,13 @@ export async function getSettings(req: Request, res: Response) {
 
 export async function updateSettings(req: Request, res: Response) {
   const settings = await settingsService.updateSettings(req.userId!, req.body);
+  audit({
+    userId: req.userId!,
+    action: 'UPDATE',
+    entity: 'Settings',
+    entityId: req.userId!,
+    ipAddress: req.ip,
+  });
   res.json({ success: true, data: settings });
 }
 

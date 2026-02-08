@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '@/components/layouts/MainLayout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { RouteErrorBoundary } from '@/components/shared/RouteErrorBoundary';
+import { NotFoundPage } from '@/components/shared/NotFoundPage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
@@ -72,5 +73,9 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ]);

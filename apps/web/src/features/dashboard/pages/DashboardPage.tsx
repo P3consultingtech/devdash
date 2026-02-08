@@ -1,16 +1,40 @@
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { useAuthStore } from '@/stores/auth-store';
 import { formatCurrency, formatDate } from '@/lib/format';
-import { getSummaryApi, getRevenueApi, getInvoicesByStatusApi, getTopClientsApi, getRecentActivityApi } from '../api';
+import {
+  getSummaryApi,
+  getRevenueApi,
+  getInvoicesByStatusApi,
+  getTopClientsApi,
+  getRecentActivityApi,
+} from '../api';
 import { Link } from 'react-router-dom';
 import { DollarSign, Clock, AlertTriangle, Users, FileText, CheckCircle } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const COLORS = ['hsl(221.2, 83.2%, 53.3%)', 'hsl(142.1, 76.2%, 36.3%)', 'hsl(38, 92%, 50%)', 'hsl(0, 84.2%, 60.2%)', 'hsl(262.1, 83.3%, 57.8%)'];
+const COLORS = [
+  'hsl(221.2, 83.2%, 53.3%)',
+  'hsl(142.1, 76.2%, 36.3%)',
+  'hsl(38, 92%, 50%)',
+  'hsl(0, 84.2%, 60.2%)',
+  'hsl(262.1, 83.3%, 57.8%)',
+];
 
 export function DashboardPage() {
   const { t } = useTranslation('dashboard');
@@ -18,11 +42,26 @@ export function DashboardPage() {
   const user = useAuthStore((s) => s.user);
   const year = new Date().getFullYear();
 
-  const { data: summary } = useQuery({ queryKey: ['dashboard-summary', year], queryFn: () => getSummaryApi(year) });
-  const { data: revenue } = useQuery({ queryKey: ['dashboard-revenue', year], queryFn: () => getRevenueApi(year) });
-  const { data: byStatus } = useQuery({ queryKey: ['dashboard-by-status', year], queryFn: () => getInvoicesByStatusApi(year) });
-  const { data: topClients } = useQuery({ queryKey: ['dashboard-top-clients', year], queryFn: () => getTopClientsApi(year) });
-  const { data: activity } = useQuery({ queryKey: ['dashboard-activity'], queryFn: getRecentActivityApi });
+  const { data: summary, isLoading: summaryLoading } = useQuery({
+    queryKey: ['dashboard-summary', year],
+    queryFn: () => getSummaryApi(year),
+  });
+  const { data: revenue, isLoading: revenueLoading } = useQuery({
+    queryKey: ['dashboard-revenue', year],
+    queryFn: () => getRevenueApi(year),
+  });
+  const { data: byStatus, isLoading: statusLoading } = useQuery({
+    queryKey: ['dashboard-by-status', year],
+    queryFn: () => getInvoicesByStatusApi(year),
+  });
+  const { data: topClients, isLoading: clientsLoading } = useQuery({
+    queryKey: ['dashboard-top-clients', year],
+    queryFn: () => getTopClientsApi(year),
+  });
+  const { data: activity, isLoading: activityLoading } = useQuery({
+    queryKey: ['dashboard-activity'],
+    queryFn: getRecentActivityApi,
+  });
 
   const kpis = [
     { key: 'totalRevenue', value: summary?.totalRevenue ?? 0, icon: DollarSign, format: true },
@@ -44,27 +83,40 @@ export function DashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-        {kpis.map(({ key, value, icon: Icon, format }) => (
-          <Card key={key}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">{t(`kpi.${key}` as any)}</span>
-              </div>
-              <p className="mt-2 text-2xl font-bold">
-                {format ? formatCurrency(value) : value}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
+        {summaryLoading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i}>
+                <CardContent className="pt-6">
+                  <Skeleton className="h-4 w-24 mb-2" />
+                  <Skeleton className="h-8 w-20" />
+                </CardContent>
+              </Card>
+            ))
+          : kpis.map(({ key, value, icon: Icon, format }) => (
+              <Card key={key}>
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">{t(`kpi.${key}` as any)}</span>
+                  </div>
+                  <p className="mt-2 text-2xl font-bold">
+                    {format ? formatCurrency(value) : value}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Revenue Chart */}
         <Card>
-          <CardHeader><CardTitle>{t('charts.monthlyRevenue')}</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>{t('charts.monthlyRevenue')}</CardTitle>
+          </CardHeader>
           <CardContent>
-            {revenueChartData.length > 0 ? (
+            {revenueLoading ? (
+              <Skeleton className="h-[300px] w-full" />
+            ) : revenueChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={revenueChartData}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -75,16 +127,22 @@ export function DashboardPage() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex h-[300px] items-center justify-center text-muted-foreground">{t('noData')}</div>
+              <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+                {t('noData')}
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Invoices by Status */}
         <Card>
-          <CardHeader><CardTitle>{t('charts.invoicesByStatus')}</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>{t('charts.invoicesByStatus')}</CardTitle>
+          </CardHeader>
           <CardContent>
-            {byStatus && byStatus.length > 0 ? (
+            {statusLoading ? (
+              <Skeleton className="h-[300px] w-full" />
+            ) : byStatus && byStatus.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
@@ -105,27 +163,42 @@ export function DashboardPage() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="flex h-[300px] items-center justify-center text-muted-foreground">{t('noData')}</div>
+              <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+                {t('noData')}
+              </div>
             )}
           </CardContent>
         </Card>
 
         {/* Top Clients */}
         <Card>
-          <CardHeader><CardTitle>{t('charts.topClients')}</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>{t('charts.topClients')}</CardTitle>
+          </CardHeader>
           <CardContent>
-            {topClients && topClients.length > 0 ? (
+            {clientsLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-8 w-full" />
+                ))}
+              </div>
+            ) : topClients && topClients.length > 0 ? (
               <Table>
                 <TableBody>
                   {topClients.map((client) => (
                     <TableRow key={client.clientId}>
                       <TableCell>
-                        <Link to={`/clients/${client.clientId}`} className="font-medium hover:underline">
+                        <Link
+                          to={`/clients/${client.clientId}`}
+                          className="font-medium hover:underline"
+                        >
                           {client.clientName}
                         </Link>
                       </TableCell>
                       <TableCell className="text-right">{client.invoiceCount} fatture</TableCell>
-                      <TableCell className="text-right font-medium">{formatCurrency(client.totalRevenue)}</TableCell>
+                      <TableCell className="text-right font-medium">
+                        {formatCurrency(client.totalRevenue)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -138,15 +211,33 @@ export function DashboardPage() {
 
         {/* Recent Activity */}
         <Card>
-          <CardHeader><CardTitle>{t('charts.recentActivity')}</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle>{t('charts.recentActivity')}</CardTitle>
+          </CardHeader>
           <CardContent>
-            {activity && activity.length > 0 ? (
+            {activityLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-6 w-full" />
+                ))}
+              </div>
+            ) : activity && activity.length > 0 ? (
               <div className="space-y-3">
                 {activity.map((item) => (
                   <div key={item.id} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
-                      <StatusBadge status={item.type === 'invoice_paid' ? 'PAID' : item.type === 'invoice_sent' ? 'SENT' : 'DRAFT'} />
-                      <Link to={`/invoices/${item.id}`} className="hover:underline">{item.description}</Link>
+                      <StatusBadge
+                        status={
+                          item.type === 'invoice_paid'
+                            ? 'PAID'
+                            : item.type === 'invoice_sent'
+                              ? 'SENT'
+                              : 'DRAFT'
+                        }
+                      />
+                      <Link to={`/invoices/${item.id}`} className="hover:underline">
+                        {item.description}
+                      </Link>
                     </div>
                     <span className="text-muted-foreground">{formatDate(item.createdAt)}</span>
                   </div>

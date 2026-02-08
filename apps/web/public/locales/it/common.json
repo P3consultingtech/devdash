@@ -33,6 +33,10 @@
     "to": "a",
     "results": "risultati"
   },
+  "notFound": {
+    "title": "Pagina non trovata",
+    "message": "La pagina che stai cercando non esiste o è stata spostata."
+  },
   "deleteConfirm": {
     "title": "Conferma eliminazione",
     "message": "Sei sicuro di voler eliminare questo elemento? L'azione non può essere annullata."

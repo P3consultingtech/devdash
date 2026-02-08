@@ -14,6 +14,9 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+// Mutex for token refresh: ensures only one refresh request at a time
+let refreshPromise: Promise<string> | null = null;
+
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -23,21 +26,31 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       const refreshToken = useAuthStore.getState().refreshToken;
-      if (refreshToken) {
-        try {
-          const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken });
-          const tokens = data.data.tokens;
-
-          useAuthStore.getState().setTokens(tokens.accessToken, tokens.refreshToken);
-          originalRequest.headers.Authorization = `Bearer ${tokens.accessToken}`;
-          return apiClient(originalRequest);
-        } catch {
-          useAuthStore.getState().logout();
-          window.location.href = '/login';
-        }
-      } else {
+      if (!refreshToken) {
         useAuthStore.getState().logout();
         window.location.href = '/login';
+        return Promise.reject(error);
+      }
+
+      try {
+        // If a refresh is already in progress, wait for it instead of issuing a new one
+        if (!refreshPromise) {
+          refreshPromise = axios.post('/api/v1/auth/refresh', { refreshToken }).then(({ data }) => {
+            const tokens = data.data.tokens;
+            useAuthStore.getState().setTokens(tokens.accessToken, tokens.refreshToken);
+            return tokens.accessToken as string;
+          });
+        }
+
+        const newAccessToken = await refreshPromise;
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
+      } catch {
+        useAuthStore.getState().logout();
+        window.location.href = '/login';
+        return Promise.reject(error);
+      } finally {
+        refreshPromise = null;
       }
     }
 

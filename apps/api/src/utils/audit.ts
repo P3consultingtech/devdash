@@ -1,14 +1,14 @@
 import { prisma } from '../config/database';
 import { logger } from '../config/logger';
-import type { AuditAction } from '@prisma/client';
+import type { AuditAction, Prisma } from '@prisma/client';
 
 interface AuditEntry {
   userId?: string;
   action: AuditAction;
   entity: string;
   entityId?: string;
-  details?: Record<string, unknown>;
-  ipAddress?: string;
+  details?: Prisma.InputJsonValue;
+  ipAddress?: string | string[];
 }
 
 /**
@@ -16,6 +16,7 @@ interface AuditEntry {
  * to avoid disrupting the main request flow.
  */
 export function audit(entry: AuditEntry): void {
+  const ip = Array.isArray(entry.ipAddress) ? entry.ipAddress[0] : entry.ipAddress;
   prisma.auditLog
     .create({
       data: {
@@ -24,10 +25,10 @@ export function audit(entry: AuditEntry): void {
         entity: entry.entity,
         entityId: entry.entityId,
         details: entry.details ?? undefined,
-        ipAddress: entry.ipAddress,
+        ipAddress: ip,
       },
     })
-    .catch((err) => {
+    .catch((err: unknown) => {
       logger.error({ err, entry }, 'Failed to write audit log');
     });
 }
