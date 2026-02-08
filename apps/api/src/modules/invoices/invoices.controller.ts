@@ -2,11 +2,14 @@ import { type Request, type Response } from 'express';
 import * as invoicesService from './invoices.service';
 import { generateInvoicePdf } from '../pdf/pdf.service';
 import { toCsv } from '../../utils/csv';
-import { formatCurrency } from '@devdash/shared';
+import { formatCurrency, type InvoiceListQuery } from '@devdash/shared';
 import { audit } from '../../utils/audit';
 
 export async function list(req: Request, res: Response) {
-  const result = await invoicesService.listInvoices(req.userId!, req.query as any);
+  const result = await invoicesService.listInvoices(
+    req.userId!,
+    req.query as unknown as InvoiceListQuery,
+  );
   res.json({ success: true, data: result });
 }
 

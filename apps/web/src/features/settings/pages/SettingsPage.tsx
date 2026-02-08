@@ -3,17 +3,40 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateProfileSchema, updateBusinessProfileSchema, updateUserSettingsSchema } from '@devdash/shared';
-import type { UpdateProfileInput, UpdateBusinessProfileInput, UpdateUserSettingsInput } from '@devdash/shared';
+import {
+  updateProfileSchema,
+  updateBusinessProfileSchema,
+  updateUserSettingsSchema,
+} from '@devdash/shared';
+import type {
+  UpdateProfileInput,
+  UpdateBusinessProfileInput,
+  UpdateUserSettingsInput,
+} from '@devdash/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useUiStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
-import { getProfileApi, updateProfileApi, getBusinessProfileApi, updateBusinessProfileApi, getSettingsApi, updateSettingsApi, uploadLogoApi, deleteLogoApi } from '../api';
+import {
+  getProfileApi,
+  updateProfileApi,
+  getBusinessProfileApi,
+  updateBusinessProfileApi,
+  getSettingsApi,
+  updateSettingsApi,
+  uploadLogoApi,
+  deleteLogoApi,
+} from '../api';
 import { toast } from 'sonner';
 import i18n from '@/lib/i18n';
 
@@ -39,11 +62,14 @@ function ProfileTab() {
       setUser(data);
       toast.success(t('profile.saved'));
     },
+    onError: () => toast.error(t('profile.saveError')),
   });
 
   return (
     <Card>
-      <CardHeader><CardTitle>{t('profile.title')}</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle>{t('profile.title')}</CardTitle>
+      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
           <div className="space-y-2">
@@ -60,7 +86,9 @@ function ProfileTab() {
               <Input {...register('lastName')} />
             </div>
           </div>
-          <Button type="submit" disabled={mutation.isPending}>{tc('save')}</Button>
+          <Button type="submit" disabled={mutation.isPending}>
+            {tc('save')}
+          </Button>
         </form>
       </CardContent>
     </Card>
@@ -79,21 +107,22 @@ function BusinessTab() {
   });
 
   useEffect(() => {
-    if (bp) reset({
-      businessName: bp.businessName || '',
-      partitaIva: bp.partitaIva || '',
-      codiceFiscale: bp.codiceFiscale || '',
-      codiceDestinatario: bp.codiceDestinatario || '',
-      pec: bp.pec || '',
-      street: bp.street || '',
-      city: bp.city || '',
-      province: bp.province || '',
-      postalCode: bp.postalCode || '',
-      country: bp.country || 'IT',
-      phone: bp.phone || '',
-      email: bp.email || '',
-      iban: bp.iban || '',
-    });
+    if (bp)
+      reset({
+        businessName: bp.businessName || '',
+        partitaIva: bp.partitaIva || '',
+        codiceFiscale: bp.codiceFiscale || '',
+        codiceDestinatario: bp.codiceDestinatario || '',
+        pec: bp.pec || '',
+        street: bp.street || '',
+        city: bp.city || '',
+        province: bp.province || '',
+        postalCode: bp.postalCode || '',
+        country: bp.country || 'IT',
+        phone: bp.phone || '',
+        email: bp.email || '',
+        iban: bp.iban || '',
+      });
   }, [bp, reset]);
 
   const mutation = useMutation({
@@ -102,6 +131,7 @@ function BusinessTab() {
       queryClient.invalidateQueries({ queryKey: ['business-profile'] });
       toast.success(t('business.saved'));
     },
+    onError: () => toast.error(t('business.saveError')),
   });
 
   const uploadLogoMutation = useMutation({
@@ -110,6 +140,7 @@ function BusinessTab() {
       queryClient.invalidateQueries({ queryKey: ['business-profile'] });
       toast.success(t('business.logoUploaded'));
     },
+    onError: () => toast.error(t('business.logoUploadError')),
   });
 
   const deleteLogoMutation = useMutation({
@@ -118,6 +149,7 @@ function BusinessTab() {
       queryClient.invalidateQueries({ queryKey: ['business-profile'] });
       toast.success(t('business.logoDeleted'));
     },
+    onError: () => toast.error(t('business.logoDeleteError')),
   });
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,7 +160,9 @@ function BusinessTab() {
 
   return (
     <Card>
-      <CardHeader><CardTitle>{t('business.title')}</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle>{t('business.title')}</CardTitle>
+      </CardHeader>
       <CardContent>
         {/* Logo Upload */}
         <div className="mb-6 space-y-2">
@@ -237,7 +271,9 @@ function BusinessTab() {
             <Label>{t('business.iban')}</Label>
             <Input {...register('iban')} maxLength={34} />
           </div>
-          <Button type="submit" disabled={mutation.isPending}>{tc('save')}</Button>
+          <Button type="submit" disabled={mutation.isPending}>
+            {tc('save')}
+          </Button>
         </form>
       </CardContent>
     </Card>
@@ -255,16 +291,17 @@ function InvoiceDefaultsTab() {
   });
 
   useEffect(() => {
-    if (settings) reset({
-      defaultIvaRate: settings.defaultIvaRate,
-      defaultApplyRitenuta: settings.defaultApplyRitenuta,
-      defaultRitenutaRate: settings.defaultRitenutaRate,
-      defaultApplyCassa: settings.defaultApplyCassa,
-      defaultCassaRate: settings.defaultCassaRate,
-      defaultApplyBollo: settings.defaultApplyBollo,
-      defaultPaymentTerms: settings.defaultPaymentTerms || '',
-      invoicePrefix: settings.invoicePrefix || 'FT',
-    });
+    if (settings)
+      reset({
+        defaultIvaRate: settings.defaultIvaRate,
+        defaultApplyRitenuta: settings.defaultApplyRitenuta,
+        defaultRitenutaRate: settings.defaultRitenutaRate,
+        defaultApplyCassa: settings.defaultApplyCassa,
+        defaultCassaRate: settings.defaultCassaRate,
+        defaultApplyBollo: settings.defaultApplyBollo,
+        defaultPaymentTerms: settings.defaultPaymentTerms || '',
+        invoicePrefix: settings.invoicePrefix || 'FT',
+      });
   }, [settings, reset]);
 
   const mutation = useMutation({
@@ -273,17 +310,24 @@ function InvoiceDefaultsTab() {
       queryClient.invalidateQueries({ queryKey: ['user-settings'] });
       toast.success(t('invoiceDefaults.saved'));
     },
+    onError: () => toast.error(t('invoiceDefaults.saveError')),
   });
 
   return (
     <Card>
-      <CardHeader><CardTitle>{t('invoiceDefaults.title')}</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle>{t('invoiceDefaults.title')}</CardTitle>
+      </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit((data) => mutation.mutate(data))} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{t('invoiceDefaults.defaultIvaRate')}</Label>
-              <Input type="number" step="0.01" {...register('defaultIvaRate', { valueAsNumber: true })} />
+              <Input
+                type="number"
+                step="0.01"
+                {...register('defaultIvaRate', { valueAsNumber: true })}
+              />
             </div>
             <div className="space-y-2">
               <Label>{t('invoiceDefaults.invoicePrefix')}</Label>
@@ -296,7 +340,11 @@ function InvoiceDefaultsTab() {
           </div>
           <div className="space-y-2">
             <Label>{t('invoiceDefaults.defaultRitenutaRate')}</Label>
-            <Input type="number" step="0.01" {...register('defaultRitenutaRate', { valueAsNumber: true })} />
+            <Input
+              type="number"
+              step="0.01"
+              {...register('defaultRitenutaRate', { valueAsNumber: true })}
+            />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" {...register('defaultApplyCassa')} className="rounded" />
@@ -304,7 +352,11 @@ function InvoiceDefaultsTab() {
           </div>
           <div className="space-y-2">
             <Label>{t('invoiceDefaults.defaultCassaRate')}</Label>
-            <Input type="number" step="0.01" {...register('defaultCassaRate', { valueAsNumber: true })} />
+            <Input
+              type="number"
+              step="0.01"
+              {...register('defaultCassaRate', { valueAsNumber: true })}
+            />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" {...register('defaultApplyBollo')} className="rounded" />
@@ -314,7 +366,9 @@ function InvoiceDefaultsTab() {
             <Label>{t('invoiceDefaults.defaultPaymentTerms')}</Label>
             <Input {...register('defaultPaymentTerms')} />
           </div>
-          <Button type="submit" disabled={mutation.isPending}>{tc('save')}</Button>
+          <Button type="submit" disabled={mutation.isPending}>
+            {tc('save')}
+          </Button>
         </form>
       </CardContent>
     </Card>
@@ -332,12 +386,16 @@ function AppearanceTab() {
 
   return (
     <Card>
-      <CardHeader><CardTitle>{t('appearance.title')}</CardTitle></CardHeader>
+      <CardHeader>
+        <CardTitle>{t('appearance.title')}</CardTitle>
+      </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <Label>{t('appearance.theme')}</Label>
-          <Select value={theme} onValueChange={(v: any) => setTheme(v)}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <Select value={theme} onValueChange={(v) => setTheme(v as 'light' | 'dark' | 'system')}>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="light">{t('appearance.themes.light')}</SelectItem>
               <SelectItem value="dark">{t('appearance.themes.dark')}</SelectItem>
@@ -348,7 +406,9 @@ function AppearanceTab() {
         <div className="space-y-2">
           <Label>{t('appearance.language')}</Label>
           <Select value={i18n.language} onValueChange={handleLanguageChange}>
-            <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-48">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="it">{t('appearance.languages.it')}</SelectItem>
               <SelectItem value="en">{t('appearance.languages.en')}</SelectItem>
@@ -374,10 +434,18 @@ export function SettingsPage() {
           <TabsTrigger value="invoiceDefaults">{t('tabs.invoiceDefaults')}</TabsTrigger>
           <TabsTrigger value="appearance">{t('tabs.appearance')}</TabsTrigger>
         </TabsList>
-        <TabsContent value="profile"><ProfileTab /></TabsContent>
-        <TabsContent value="business"><BusinessTab /></TabsContent>
-        <TabsContent value="invoiceDefaults"><InvoiceDefaultsTab /></TabsContent>
-        <TabsContent value="appearance"><AppearanceTab /></TabsContent>
+        <TabsContent value="profile">
+          <ProfileTab />
+        </TabsContent>
+        <TabsContent value="business">
+          <BusinessTab />
+        </TabsContent>
+        <TabsContent value="invoiceDefaults">
+          <InvoiceDefaultsTab />
+        </TabsContent>
+        <TabsContent value="appearance">
+          <AppearanceTab />
+        </TabsContent>
       </Tabs>
     </div>
   );

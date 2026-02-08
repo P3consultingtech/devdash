@@ -11,7 +11,8 @@
     "firstName": "Nome",
     "lastName": "Cognome",
     "email": "Email",
-    "saved": "Profilo aggiornato"
+    "saved": "Profilo aggiornato",
+    "saveError": "Errore durante il salvataggio del profilo"
   },
   "business": {
     "title": "Informazioni Azienda",
@@ -35,7 +36,10 @@
     "logoHint": "PNG, JPG, SVG o WebP. Max 2MB.",
     "logoUploaded": "Logo caricato",
     "logoDeleted": "Logo rimosso",
-    "saved": "Informazioni azienda aggiornate"
+    "saved": "Informazioni azienda aggiornate",
+    "saveError": "Errore durante il salvataggio",
+    "logoUploadError": "Errore durante il caricamento del logo",
+    "logoDeleteError": "Errore durante la rimozione del logo"
   },
   "invoiceDefaults": {
     "title": "Default Fatture",
@@ -47,7 +51,8 @@
     "defaultApplyBollo": "Applica bollo virtuale",
     "defaultPaymentTerms": "Modalità di pagamento",
     "invoicePrefix": "Prefisso fattura",
-    "saved": "Default fatture aggiornati"
+    "saved": "Default fatture aggiornati",
+    "saveError": "Errore durante il salvataggio dei default"
   },
   "appearance": {
     "title": "Aspetto",

@@ -57,6 +57,7 @@ export function ClientsListPage() {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       toast.success(t('deleted'));
     },
+    onError: () => toast.error(t('deleteError')),
   });
 
   const handleExportCsv = async () => {
@@ -128,7 +129,7 @@ export function ClientsListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {clients.map((client: any) => (
+              {clients.map((client) => (
                 <TableRow key={client.id}>
                   <TableCell className="font-medium">
                     <Link to={`/clients/${client.id}`} className="hover:underline">
@@ -136,7 +137,7 @@ export function ClientsListPage() {
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{t(`types.${client.type}` as any)}</Badge>
+                    <Badge variant="secondary">{t(`types.${client.type}`)}</Badge>
                   </TableCell>
                   <TableCell>{client.email || '-'}</TableCell>
                   <TableCell className="font-mono text-sm">{client.partitaIva || '-'}</TableCell>
@@ -150,7 +151,7 @@ export function ClientsListPage() {
                       <DropdownMenuContent align="end">
                         <Link to={`/clients/${client.id}`}>
                           <DropdownMenuItem>
-                            <Eye className="h-4 w-4" /> {tc('edit')}
+                            <Eye className="h-4 w-4" /> {t('viewDetail')}
                           </DropdownMenuItem>
                         </Link>
                         <Link to={`/clients/${client.id}/edit`}>

@@ -41,5 +41,8 @@
     "status": "Status",
     "amount": "Amount"
   },
-  "exportError": "Error exporting CSV"
+  "exportError": "Error exporting CSV",
+  "viewDetail": "View Detail",
+  "deleteError": "Error deleting client",
+  "saveError": "Error saving client"
 }

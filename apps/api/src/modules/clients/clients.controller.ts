@@ -2,9 +2,13 @@ import { type Request, type Response } from 'express';
 import * as clientsService from './clients.service';
 import { toCsv } from '../../utils/csv';
 import { audit } from '../../utils/audit';
+import type { ClientListQuery } from '@devdash/shared';
 
 export async function list(req: Request, res: Response) {
-  const result = await clientsService.listClients(req.userId!, req.query as any);
+  const result = await clientsService.listClients(
+    req.userId!,
+    req.query as unknown as ClientListQuery,
+  );
   res.json({ success: true, data: result });
 }
 

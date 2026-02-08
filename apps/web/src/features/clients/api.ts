@@ -1,23 +1,32 @@
 import apiClient from '@/lib/api-client';
-import type { CreateClientInput, ClientListQuery, ApiResponse, PaginatedResponse } from '@devdash/shared';
+import type {
+  CreateClientInput,
+  ClientListQuery,
+  ApiResponse,
+  PaginatedResponse,
+  ClientResponse,
+  ClientDetailResponse,
+} from '@devdash/shared';
 
 export async function listClientsApi(params: Partial<ClientListQuery>) {
-  const res = await apiClient.get<ApiResponse<PaginatedResponse<any>>>('/clients', { params });
+  const res = await apiClient.get<ApiResponse<PaginatedResponse<ClientResponse>>>('/clients', {
+    params,
+  });
   return res.data.data!;
 }
 
 export async function getClientApi(id: string) {
-  const res = await apiClient.get<ApiResponse<any>>(`/clients/${id}`);
+  const res = await apiClient.get<ApiResponse<ClientDetailResponse>>(`/clients/${id}`);
   return res.data.data!;
 }
 
 export async function createClientApi(data: CreateClientInput) {
-  const res = await apiClient.post<ApiResponse<any>>('/clients', data);
+  const res = await apiClient.post<ApiResponse<ClientResponse>>('/clients', data);
   return res.data.data!;
 }
 
 export async function updateClientApi(id: string, data: CreateClientInput) {
-  const res = await apiClient.put<ApiResponse<any>>(`/clients/${id}`, data);
+  const res = await apiClient.put<ApiResponse<ClientResponse>>(`/clients/${id}`, data);
   return res.data.data!;
 }
 

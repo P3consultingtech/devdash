@@ -41,5 +41,8 @@
     "status": "Stato",
     "amount": "Importo"
   },
-  "exportError": "Errore durante l'esportazione CSV"
+  "exportError": "Errore durante l'esportazione CSV",
+  "viewDetail": "Dettaglio",
+  "deleteError": "Errore durante l'eliminazione del cliente",
+  "saveError": "Errore durante il salvataggio del cliente"
 }

@@ -6,4 +6,5 @@ export * from './schemas/dashboard';
 export * from './schemas/audit';
 export * from './types/common';
 export * from './types/api';
+export * from './types/responses';
 export * from './utils/italian-tax';

@@ -11,7 +11,8 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "email": "Email",
-    "saved": "Profile updated"
+    "saved": "Profile updated",
+    "saveError": "Error saving profile"
   },
   "business": {
     "title": "Business Information",
@@ -35,7 +36,10 @@
     "logoHint": "PNG, JPG, SVG or WebP. Max 2MB.",
     "logoUploaded": "Logo uploaded",
     "logoDeleted": "Logo removed",
-    "saved": "Business information updated"
+    "saved": "Business information updated",
+    "saveError": "Error saving business information",
+    "logoUploadError": "Error uploading logo",
+    "logoDeleteError": "Error removing logo"
   },
   "invoiceDefaults": {
     "title": "Invoice Defaults",
@@ -47,7 +51,8 @@
     "defaultApplyBollo": "Apply revenue stamp",
     "defaultPaymentTerms": "Payment terms",
     "invoicePrefix": "Invoice prefix",
-    "saved": "Invoice defaults updated"
+    "saved": "Invoice defaults updated",
+    "saveError": "Error saving invoice defaults"
   },
   "appearance": {
     "title": "Appearance",

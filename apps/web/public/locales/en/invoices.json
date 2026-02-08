@@ -66,5 +66,10 @@
   "summary": "Summary",
   "revertToDraft": "Revert to Draft",
   "downloadError": "Error downloading PDF",
-  "exportError": "Error exporting CSV"
+  "exportError": "Error exporting CSV",
+  "allStatuses": "All",
+  "detail": "Detail",
+  "deleteError": "Error deleting invoice",
+  "duplicateError": "Error duplicating invoice",
+  "statusError": "Error updating invoice status"
 }

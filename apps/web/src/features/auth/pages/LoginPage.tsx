@@ -4,10 +4,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { loginSchema, type LoginInput } from '@devdash/shared';
+import { isAxiosError } from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useAuthStore } from '@/stores/auth-store';
 import { loginApi } from '../api';
 
@@ -17,7 +25,11 @@ export function LoginPage() {
   const { isAuthenticated, setAuth } = useAuthStore();
   const [error, setError] = useState('');
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginInput>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
@@ -29,8 +41,9 @@ export function LoginPage() {
       const result = await loginApi(data);
       setAuth(result.user, result.tokens.accessToken, result.tokens.refreshToken);
       navigate('/');
-    } catch (err: any) {
-      setError(err.response?.data?.error?.message || t('login.invalidCredentials'));
+    } catch (err: unknown) {
+      const message = isAxiosError(err) ? err.response?.data?.error?.message : undefined;
+      setError(message || t('login.invalidCredentials'));
     }
   };
 
@@ -44,7 +57,9 @@ export function LoginPage() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
             {error && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                {error}
+              </div>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">{t('login.email')}</Label>
@@ -54,7 +69,9 @@ export function LoginPage() {
             <div className="space-y-2">
               <Label htmlFor="password">{t('login.password')}</Label>
               <Input id="password" type="password" {...register('password')} />
-              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-xs text-destructive">{errors.password.message}</p>
+              )}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
@@ -63,7 +80,9 @@ export function LoginPage() {
             </Button>
             <p className="text-sm text-muted-foreground">
               {t('login.noAccount')}{' '}
-              <Link to="/register" className="text-primary hover:underline">{t('login.register')}</Link>
+              <Link to="/register" className="text-primary hover:underline">
+                {t('login.register')}
+              </Link>
             </p>
           </CardFooter>
         </form>

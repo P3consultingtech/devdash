@@ -79,7 +79,7 @@ export function InvoiceFormPage() {
         clientId: existingInvoice.clientId,
         issueDate: formatDateISO(new Date(existingInvoice.issueDate)),
         dueDate: formatDateISO(new Date(existingInvoice.dueDate)),
-        items: existingInvoice.items.map((item: any) => ({
+        items: existingInvoice.items.map((item) => ({
           description: item.description,
           quantity: item.quantity,
           unitPriceCents: item.unitPriceCents,
@@ -127,6 +127,7 @@ export function InvoiceFormPage() {
       toast.success(isEditing ? t('updated') : t('created'));
       navigate('/invoices');
     },
+    onError: () => toast.error(tc('error')),
   });
 
   const clients = clientsData?.data ?? [];
@@ -151,7 +152,7 @@ export function InvoiceFormPage() {
                       <SelectValue placeholder={t('selectClient')} />
                     </SelectTrigger>
                     <SelectContent>
-                      {clients.map((c: any) => (
+                      {clients.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.name}
                         </SelectItem>
@@ -166,10 +167,16 @@ export function InvoiceFormPage() {
                   <div className="space-y-2">
                     <Label>{t('fields.issueDate')}</Label>
                     <Input type="date" {...register('issueDate')} />
+                    {errors.issueDate && (
+                      <p className="text-xs text-destructive">{errors.issueDate.message}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label>{t('fields.dueDate')}</Label>
                     <Input type="date" {...register('dueDate')} />
+                    {errors.dueDate && (
+                      <p className="text-xs text-destructive">{errors.dueDate.message}</p>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -188,6 +195,11 @@ export function InvoiceFormPage() {
                         placeholder={t('items.description')}
                         {...register(`items.${index}.description`)}
                       />
+                      {errors.items?.[index]?.description && (
+                        <p className="text-xs text-destructive">
+                          {errors.items[index].description.message}
+                        </p>
+                      )}
                     </div>
                     <div className="w-20 space-y-1">
                       <Input

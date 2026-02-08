@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createClientSchema, type CreateClientInput } from '@devdash/shared';
+import { createClientSchema, type CreateClientInput, type ClientType } from '@devdash/shared';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -77,6 +77,7 @@ export function ClientFormPage() {
       toast.success(isEditing ? t('updated') : t('created'));
       navigate('/clients');
     },
+    onError: () => toast.error(t('saveError')),
   });
 
   return (
@@ -92,7 +93,7 @@ export function ClientFormPage() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <Label>{t('fields.type')}</Label>
-                <Select value={clientType} onValueChange={(v: any) => setValue('type', v)}>
+                <Select value={clientType} onValueChange={(v) => setValue('type', v as ClientType)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -111,10 +112,12 @@ export function ClientFormPage() {
               <div className="space-y-2">
                 <Label>{t('fields.email')}</Label>
                 <Input type="email" {...register('email')} />
+                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label>{t('fields.phone')}</Label>
                 <Input {...register('phone')} />
+                {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
               </div>
             </CardContent>
           </Card>
@@ -136,14 +139,21 @@ export function ClientFormPage() {
               <div className="space-y-2">
                 <Label>{t('fields.codiceFiscale')}</Label>
                 <Input {...register('codiceFiscale')} maxLength={16} />
+                {errors.codiceFiscale && (
+                  <p className="text-xs text-destructive">{errors.codiceFiscale.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>{t('fields.codiceDestinatario')}</Label>
                 <Input {...register('codiceDestinatario')} maxLength={7} />
+                {errors.codiceDestinatario && (
+                  <p className="text-xs text-destructive">{errors.codiceDestinatario.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>{t('fields.pec')}</Label>
                 <Input type="email" {...register('pec')} />
+                {errors.pec && <p className="text-xs text-destructive">{errors.pec.message}</p>}
               </div>
             </CardContent>
           </Card>

@@ -66,5 +66,10 @@
   "summary": "Riepilogo",
   "revertToDraft": "Riporta a Bozza",
   "downloadError": "Errore durante il download del PDF",
-  "exportError": "Errore durante l'esportazione CSV"
+  "exportError": "Errore durante l'esportazione CSV",
+  "allStatuses": "Tutti",
+  "detail": "Dettaglio",
+  "deleteError": "Errore durante l'eliminazione della fattura",
+  "duplicateError": "Errore durante la duplicazione della fattura",
+  "statusError": "Errore durante l'aggiornamento dello stato"
 }

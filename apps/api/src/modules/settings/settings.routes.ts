@@ -12,7 +12,7 @@ import {
 } from '@devdash/shared';
 import * as controller from './settings.controller';
 
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'] as const;
+const ALLOWED_MIME_TYPES: string[] = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/webp'];
 
 const MIME_TO_EXT: Record<string, string> = {
   'image/png': '.png',
@@ -31,7 +31,7 @@ const upload = multer({
   }),
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
   fileFilter: (_req, file, cb) => {
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype as any)) {
+    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
       return cb(new Error('Only PNG, JPEG, SVG, and WebP images are allowed'));
     }
     cb(null, true);

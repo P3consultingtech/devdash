@@ -63,7 +63,14 @@ export function DashboardPage() {
     queryFn: getRecentActivityApi,
   });
 
-  const kpis = [
+  type KpiKey =
+    | 'totalRevenue'
+    | 'outstanding'
+    | 'overdue'
+    | 'totalClients'
+    | 'totalInvoices'
+    | 'paidInvoices';
+  const kpis: { key: KpiKey; value: number; icon: typeof DollarSign; format: boolean }[] = [
     { key: 'totalRevenue', value: summary?.totalRevenue ?? 0, icon: DollarSign, format: true },
     { key: 'outstanding', value: summary?.outstandingAmount ?? 0, icon: Clock, format: true },
     { key: 'overdue', value: summary?.overdueAmount ?? 0, icon: AlertTriangle, format: true },
@@ -73,7 +80,7 @@ export function DashboardPage() {
   ];
 
   const revenueChartData = (revenue ?? []).map((r) => ({
-    name: t(`months.${r.month}` as any),
+    name: t(`months.${r.month}` as `months.${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12}`),
     revenue: r.revenue / 100,
   }));
 
@@ -97,7 +104,7 @@ export function DashboardPage() {
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-2">
                     <Icon className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm text-muted-foreground">{t(`kpi.${key}` as any)}</span>
+                    <span className="text-sm text-muted-foreground">{t(`kpi.${key}`)}</span>
                   </div>
                   <p className="mt-2 text-2xl font-bold">
                     {format ? formatCurrency(value) : value}
@@ -195,7 +202,9 @@ export function DashboardPage() {
                           {client.clientName}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-right">{client.invoiceCount} fatture</TableCell>
+                      <TableCell className="text-right">
+                        {t('invoiceCount', { count: client.invoiceCount })}
+                      </TableCell>
                       <TableCell className="text-right font-medium">
                         {formatCurrency(client.totalRevenue)}
                       </TableCell>

@@ -41,6 +41,7 @@ import {
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { useDebounce } from '@/hooks/useDebounce';
 import { formatCurrency, formatDate } from '@/lib/format';
+import type { InvoiceStatus } from '@devdash/shared';
 import { listInvoicesApi, deleteInvoiceApi, duplicateInvoiceApi } from '../api';
 import { useAuthStore } from '@/stores/auth-store';
 import { toast } from 'sonner';
@@ -62,7 +63,7 @@ export function InvoicesListPage() {
       listInvoicesApi({
         page,
         search: debouncedSearch || undefined,
-        status: (status || undefined) as any,
+        status: (status as InvoiceStatus) || undefined,
       }),
   });
 
@@ -72,6 +73,7 @@ export function InvoicesListPage() {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success(t('deleted'));
     },
+    onError: () => toast.error(t('deleteError')),
   });
 
   const duplicateMutation = useMutation({
@@ -80,6 +82,7 @@ export function InvoicesListPage() {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success(t('duplicated'));
     },
+    onError: () => toast.error(t('duplicateError')),
   });
 
   const handleDownloadPdf = async (id: string, number: string) => {
@@ -161,7 +164,7 @@ export function InvoicesListPage() {
             <SelectValue placeholder={t('fields.status')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tutti</SelectItem>
+            <SelectItem value="all">{t('allStatuses')}</SelectItem>
             <SelectItem value="DRAFT">{t('status.DRAFT')}</SelectItem>
             <SelectItem value="SENT">{t('status.SENT')}</SelectItem>
             <SelectItem value="PAID">{t('status.PAID')}</SelectItem>
@@ -190,7 +193,7 @@ export function InvoicesListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices.map((inv: any) => (
+              {invoices.map((inv) => (
                 <TableRow key={inv.id}>
                   <TableCell className="font-medium">
                     <Link to={`/invoices/${inv.id}`} className="hover:underline">
@@ -216,7 +219,7 @@ export function InvoicesListPage() {
                       <DropdownMenuContent align="end">
                         <Link to={`/invoices/${inv.id}`}>
                           <DropdownMenuItem>
-                            <Eye className="h-4 w-4" /> Dettaglio
+                            <Eye className="h-4 w-4" /> {t('detail')}
                           </DropdownMenuItem>
                         </Link>
                         {inv.status === 'DRAFT' && (

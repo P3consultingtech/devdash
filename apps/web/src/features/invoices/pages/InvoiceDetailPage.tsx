@@ -58,6 +58,7 @@ export function InvoiceDetailPage() {
       toast.success(t('deleted'));
       navigate('/invoices');
     },
+    onError: () => toast.error(t('deleteError')),
   });
 
   const statusMutation = useMutation({
@@ -67,6 +68,7 @@ export function InvoiceDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['invoices'] });
       toast.success(t('statusUpdated'));
     },
+    onError: () => toast.error(t('statusError')),
   });
 
   const duplicateMutation = useMutation({
@@ -76,6 +78,7 @@ export function InvoiceDetailPage() {
       toast.success(t('duplicated'));
       navigate(`/invoices/${data.id}`);
     },
+    onError: () => toast.error(t('duplicateError')),
   });
 
   const handleDownloadPdf = async () => {
@@ -88,7 +91,7 @@ export function InvoiceDetailPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${invoice.number.replace('/', '-')}.pdf`;
+      a.download = `${invoice?.number.replace('/', '-') ?? 'invoice'}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch {
@@ -230,7 +233,7 @@ export function InvoiceDetailPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {invoice.items.map((item: any) => (
+                  {invoice.items.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>{item.description}</TableCell>
                       <TableCell className="text-right">{item.quantity}</TableCell>

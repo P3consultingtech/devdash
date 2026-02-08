@@ -50,6 +50,7 @@ export function ClientDetailPage() {
       toast.success(t('deleted'));
       navigate('/clients');
     },
+    onError: () => toast.error(t('deleteError')),
   });
 
   if (isLoading) return <DetailSkeleton />;
@@ -177,7 +178,7 @@ export function ClientDetailPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {client.invoices.map((inv: any) => (
+                {client.invoices.map((inv) => (
                   <TableRow key={inv.id}>
                     <TableCell>
                       <Link to={`/invoices/${inv.id}`} className="font-medium hover:underline">

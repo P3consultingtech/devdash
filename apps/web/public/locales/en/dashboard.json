@@ -29,5 +29,6 @@
     "11": "Nov",
     "12": "Dec"
   },
-  "noData": "No data available for the selected period"
+  "noData": "No data available for the selected period",
+  "invoiceCount": "{{count}} invoices"
 }
