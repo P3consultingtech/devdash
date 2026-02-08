@@ -4,6 +4,14 @@ import PDFDocument from 'pdfkit';
 import { prisma } from '../../config/database';
 import { formatCurrency } from '@devdash/shared';
 
+/** Sanitize user input for safe PDF rendering: strip control chars and limit length. */
+function sanitize(text: string | null | undefined, maxLength = 1000): string {
+  if (!text) return '';
+  // Remove control characters (except newline \n and tab \t) and null bytes
+  // eslint-disable-next-line no-control-regex
+  return text.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').slice(0, maxLength);
+}
+
 export async function generateInvoicePdf(userId: string, invoice: any): Promise<Buffer> {
   const businessProfile = await prisma.businessProfile.findUnique({
     where: { userId },
@@ -22,12 +30,14 @@ export async function generateInvoicePdf(userId: string, invoice: any): Promise<
     // --- HEADER ---
     let headerLeft = 50;
     if (businessProfile?.logoUrl) {
+      const uploadsDir = path.resolve(__dirname, '../../../uploads');
       const logoPath = path.resolve(
         __dirname,
         '../../../',
         businessProfile.logoUrl.replace(/^\//, ''),
       );
-      if (fs.existsSync(logoPath)) {
+      // Prevent path traversal: logo must be inside uploads directory
+      if (logoPath.startsWith(uploadsDir) && fs.existsSync(logoPath)) {
         doc.image(logoPath, 50, 40, { width: 60, height: 60 });
         headerLeft = 120;
       }
@@ -156,7 +166,7 @@ export async function generateInvoicePdf(userId: string, invoice: any): Promise<
         doc.addPage();
         y = 50;
       }
-      doc.text(item.description, cols.desc, y, { width: 260 });
+      doc.text(sanitize(item.description, 500), cols.desc, y, { width: 260 });
       doc.text(item.quantity.toString(), cols.qty, y, { width: 60, align: 'right' });
       doc.text(formatCurrency(item.unitPriceCents, 'it'), cols.price, y, {
         width: 60,
@@ -247,8 +257,9 @@ export async function generateInvoicePdf(userId: string, invoice: any): Promise<
       y += 10;
       doc.fontSize(9).font('Helvetica-Bold').text('Note:', 50, y);
       y += 12;
-      doc.font('Helvetica').text(invoice.notes, 50, y, { width: pageWidth });
-      y += doc.heightOfString(invoice.notes, { width: pageWidth }) + 10;
+      const safeNotes = sanitize(invoice.notes, 2000);
+      doc.font('Helvetica').text(safeNotes, 50, y, { width: pageWidth });
+      y += doc.heightOfString(safeNotes, { width: pageWidth }) + 10;
     }
 
     // --- PAYMENT INFO ---
@@ -258,7 +269,7 @@ export async function generateInvoicePdf(userId: string, invoice: any): Promise<
       y += 12;
       doc.font('Helvetica');
       if (invoice.paymentTerms) {
-        doc.text(invoice.paymentTerms, 50, y);
+        doc.text(sanitize(invoice.paymentTerms, 500), 50, y);
         y += 12;
       }
       if (businessProfile?.iban) {

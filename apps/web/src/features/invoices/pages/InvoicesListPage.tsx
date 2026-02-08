@@ -3,11 +3,31 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, MoreHorizontal, Eye, Pencil, Trash2, Copy, Download } from 'lucide-react';
+import { TableSkeleton } from '@/components/shared/TableSkeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { StatusBadge } from '@/components/shared/StatusBadge';
 import { useDebounce } from '@/hooks/useDebounce';
 import { formatCurrency, formatDate } from '@/lib/format';
@@ -27,11 +47,12 @@ export function InvoicesListPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['invoices', { page, search: debouncedSearch, status }],
-    queryFn: () => listInvoicesApi({
-      page,
-      search: debouncedSearch || undefined,
-      status: (status || undefined) as any,
-    }),
+    queryFn: () =>
+      listInvoicesApi({
+        page,
+        search: debouncedSearch || undefined,
+        status: (status || undefined) as any,
+      }),
   });
 
   const deleteMutation = useMutation({
@@ -88,7 +109,9 @@ export function InvoicesListPage() {
             <Download className="h-4 w-4" /> {t('exportCsv')}
           </Button>
           <Link to="/invoices/new">
-            <Button><Plus className="h-4 w-4" /> {t('addInvoice')}</Button>
+            <Button>
+              <Plus className="h-4 w-4" /> {t('addInvoice')}
+            </Button>
           </Link>
         </div>
       </div>
@@ -99,12 +122,23 @@ export function InvoicesListPage() {
           <Input
             placeholder={tc('search')}
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="pl-9"
           />
         </div>
-        <Select value={status} onValueChange={(v) => { setStatus(v === 'all' ? '' : v); setPage(1); }}>
-          <SelectTrigger className="w-40"><SelectValue placeholder={t('fields.status')} /></SelectTrigger>
+        <Select
+          value={status}
+          onValueChange={(v) => {
+            setStatus(v === 'all' ? '' : v);
+            setPage(1);
+          }}
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder={t('fields.status')} />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tutti</SelectItem>
             <SelectItem value="DRAFT">{t('status.DRAFT')}</SelectItem>
@@ -117,7 +151,7 @@ export function InvoicesListPage() {
       </div>
 
       {isLoading ? (
-        <div className="py-10 text-center text-muted-foreground">{tc('loading')}</div>
+        <TableSkeleton rows={5} columns={5} />
       ) : invoices.length === 0 ? (
         <div className="py-10 text-center text-muted-foreground">{t('noInvoices')}</div>
       ) : (
@@ -138,25 +172,37 @@ export function InvoicesListPage() {
               {invoices.map((inv: any) => (
                 <TableRow key={inv.id}>
                   <TableCell className="font-medium">
-                    <Link to={`/invoices/${inv.id}`} className="hover:underline">{inv.number}</Link>
+                    <Link to={`/invoices/${inv.id}`} className="hover:underline">
+                      {inv.number}
+                    </Link>
                   </TableCell>
                   <TableCell>{inv.client?.name}</TableCell>
                   <TableCell>{formatDate(inv.issueDate)}</TableCell>
                   <TableCell>{formatDate(inv.dueDate)}</TableCell>
-                  <TableCell><StatusBadge status={inv.status} /></TableCell>
-                  <TableCell className="text-right font-medium">{formatCurrency(inv.netPayable)}</TableCell>
+                  <TableCell>
+                    <StatusBadge status={inv.status} />
+                  </TableCell>
+                  <TableCell className="text-right font-medium">
+                    {formatCurrency(inv.netPayable)}
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <Link to={`/invoices/${inv.id}`}>
-                          <DropdownMenuItem><Eye className="h-4 w-4" /> Dettaglio</DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4" /> Dettaglio
+                          </DropdownMenuItem>
                         </Link>
                         {inv.status === 'DRAFT' && (
                           <Link to={`/invoices/${inv.id}/edit`}>
-                            <DropdownMenuItem><Pencil className="h-4 w-4" /> {tc('edit')}</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Pencil className="h-4 w-4" /> {tc('edit')}
+                            </DropdownMenuItem>
                           </Link>
                         )}
                         <DropdownMenuItem onClick={() => handleDownloadPdf(inv.id, inv.number)}>
@@ -170,7 +216,9 @@ export function InvoicesListPage() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => { if (confirm(t('deleteConfirm'))) deleteMutation.mutate(inv.id); }}
+                              onClick={() => {
+                                if (confirm(t('deleteConfirm'))) deleteMutation.mutate(inv.id);
+                              }}
                             >
                               <Trash2 className="h-4 w-4" /> {tc('delete')}
                             </DropdownMenuItem>
@@ -187,11 +235,26 @@ export function InvoicesListPage() {
           {pagination && pagination.totalPages > 1 && (
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                {tc('pagination.page')} {pagination.page} {tc('pagination.of')} {pagination.totalPages}
+                {tc('pagination.page')} {pagination.page} {tc('pagination.of')}{' '}
+                {pagination.totalPages}
               </span>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>{tc('previous')}</Button>
-                <Button variant="outline" size="sm" disabled={page >= pagination.totalPages} onClick={() => setPage(page + 1)}>{tc('next')}</Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page <= 1}
+                  onClick={() => setPage(page - 1)}
+                >
+                  {tc('previous')}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={page >= pagination.totalPages}
+                  onClick={() => setPage(page + 1)}
+                >
+                  {tc('next')}
+                </Button>
               </div>
             </div>
           )}

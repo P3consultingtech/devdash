@@ -1,6 +1,12 @@
 import { prisma } from '../../config/database';
 import { AppError } from '../../middleware/error-handler';
-import type { UpdateBusinessProfileInput, UpdateUserSettingsInput, UpdateProfileInput } from '@devdash/shared';
+import type {
+  UpdateBusinessProfileInput,
+  UpdateUserSettingsInput,
+  UpdateProfileInput,
+  AuditLogQuery,
+} from '@devdash/shared';
+import type { Prisma } from '@prisma/client';
 
 export async function getProfile(userId: string) {
   const user = await prisma.user.findUnique({
@@ -94,4 +100,34 @@ export async function updateSettings(userId: string, input: UpdateUserSettingsIn
     update: { ...input },
     create: { userId, ...input },
   });
+}
+
+export async function getAuditLogs(userId: string, query: AuditLogQuery) {
+  const { page, limit, action, entity, entityId } = query;
+  const where: Prisma.AuditLogWhereInput = {
+    userId,
+    ...(action && { action }),
+    ...(entity && { entity }),
+    ...(entityId && { entityId }),
+  };
+
+  const [items, total] = await Promise.all([
+    prisma.auditLog.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.auditLog.count({ where }),
+  ]);
+
+  return {
+    items,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
 }

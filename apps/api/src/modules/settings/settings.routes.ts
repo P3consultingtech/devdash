@@ -8,6 +8,7 @@ import {
   updateBusinessProfileSchema,
   updateUserSettingsSchema,
   updateProfileSchema,
+  auditLogQuerySchema,
 } from '@devdash/shared';
 import * as controller from './settings.controller';
 
@@ -49,5 +50,6 @@ router.post('/logo', upload.single('logo'), controller.uploadLogo);
 router.delete('/logo', controller.deleteLogo);
 router.get('/preferences', controller.getSettings);
 router.put('/preferences', validate(updateUserSettingsSchema), controller.updateSettings);
+router.get('/audit-log', validate(auditLogQuerySchema, 'query'), controller.getAuditLogs);
 
 export default router;
