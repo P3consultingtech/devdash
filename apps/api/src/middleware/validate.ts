@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { ZodSchema, ZodError } from 'zod';
+import { type Request, type Response, type NextFunction } from 'express';
+import { type ZodSchema, ZodError } from 'zod';
 import { AppError } from './error-handler';
 
 type RequestPart = 'body' | 'query' | 'params';
@@ -8,7 +8,12 @@ export function validate(schema: ZodSchema, source: RequestPart = 'body') {
   return (req: Request, _res: Response, next: NextFunction) => {
     try {
       const parsed = schema.parse(req[source]);
-      req[source] = parsed;
+      if (source === 'query') {
+        // In Express 5, req.query is a read-only getter, so override it
+        Object.defineProperty(req, 'query', { value: parsed, writable: true });
+      } else {
+        req[source] = parsed;
+      }
       next();
     } catch (err) {
       if (err instanceof ZodError) {
