@@ -1,0 +1,40 @@
+{
+  "appName": "DevDash",
+  "loading": "Caricamento...",
+  "save": "Salva",
+  "cancel": "Annulla",
+  "delete": "Elimina",
+  "edit": "Modifica",
+  "create": "Crea",
+  "search": "Cerca...",
+  "actions": "Azioni",
+  "confirm": "Conferma",
+  "back": "Indietro",
+  "next": "Avanti",
+  "previous": "Precedente",
+  "yes": "Sì",
+  "no": "No",
+  "noResults": "Nessun risultato",
+  "error": "Errore",
+  "success": "Successo",
+  "required": "Campo obbligatorio",
+  "invalidEmail": "Email non valida",
+  "nav": {
+    "dashboard": "Dashboard",
+    "clients": "Clienti",
+    "invoices": "Fatture",
+    "settings": "Impostazioni",
+    "logout": "Esci"
+  },
+  "pagination": {
+    "page": "Pagina",
+    "of": "di",
+    "showing": "Mostrando",
+    "to": "a",
+    "results": "risultati"
+  },
+  "deleteConfirm": {
+    "title": "Conferma eliminazione",
+    "message": "Sei sicuro di voler eliminare questo elemento? L'azione non può essere annullata."
+  }
+}

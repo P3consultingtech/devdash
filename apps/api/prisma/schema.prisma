@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  locale       String   @default("it")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  businessProfile BusinessProfile?
+  clients         Client[]
+  invoices        Invoice[]
+  settings        UserSettings?
+  refreshTokens   RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model BusinessProfile {
+  id                  String  @id @default(uuid())
+  userId              String  @unique @map("user_id")
+  businessName        String  @map("business_name")
+  partitaIva          String? @map("partita_iva")
+  codiceFiscale       String? @map("codice_fiscale")
+  codiceDestinatario  String? @map("codice_destinatario")
+  pec                 String?
+  regimeFiscale       String? @map("regime_fiscale")
+  street              String?
+  city                String?
+  province            String?
+  postalCode          String? @map("postal_code")
+  country             String  @default("IT")
+  phone               String?
+  email               String?
+  iban                String?
+  logoUrl             String? @map("logo_url")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("business_profiles")
+}
+
+enum ClientType {
+  BUSINESS
+  FREELANCER
+  INDIVIDUAL
+}
+
+model Client {
+  id                 String     @id @default(uuid())
+  userId             String     @map("user_id")
+  type               ClientType @default(BUSINESS)
+  name               String
+  email              String?
+  phone              String?
+  partitaIva         String?    @map("partita_iva")
+  codiceFiscale      String?    @map("codice_fiscale")
+  codiceDestinatario String?    @map("codice_destinatario")
+  pec                String?
+  street             String?
+  city               String?
+  province           String?
+  postalCode         String?    @map("postal_code")
+  country            String     @default("IT")
+  notes              String?
+  isDeleted          Boolean    @default(false) @map("is_deleted")
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  invoices Invoice[]
+
+  @@map("clients")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model Invoice {
+  id              String        @id @default(uuid())
+  userId          String        @map("user_id")
+  clientId        String        @map("client_id")
+  number          String
+  year            Int
+  sequenceNumber  Int           @map("sequence_number")
+  status          InvoiceStatus @default(DRAFT)
+  issueDate       DateTime      @map("issue_date")
+  dueDate         DateTime      @map("due_date")
+
+  // Tax settings
+  ivaRate         Float         @default(22) @map("iva_rate")
+  applyRitenuta   Boolean       @default(false) @map("apply_ritenuta")
+  ritenutaRate    Float         @default(20) @map("ritenuta_rate")
+  applyCassa      Boolean       @default(false) @map("apply_cassa")
+  cassaRate       Float         @default(4) @map("cassa_rate")
+  applyBollo      Boolean       @default(false) @map("apply_bollo")
+
+  // Calculated amounts (in cents)
+  subtotal        Int           @default(0)
+  cassaAmount     Int           @default(0) @map("cassa_amount")
+  taxableBase     Int           @default(0) @map("taxable_base")
+  ivaAmount       Int           @default(0) @map("iva_amount")
+  bolloAmount     Int           @default(0) @map("bollo_amount")
+  grossTotal      Int           @default(0) @map("gross_total")
+  ritenutaAmount  Int           @default(0) @map("ritenuta_amount")
+  netPayable      Int           @default(0) @map("net_payable")
+
+  notes           String?
+  paymentTerms    String?       @map("payment_terms")
+
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  user   User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client Client        @relation(fields: [clientId], references: [id])
+  items  InvoiceItem[]
+
+  @@unique([userId, year, sequenceNumber])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id             String @id @default(uuid())
+  invoiceId      String @map("invoice_id")
+  description    String
+  quantity       Float
+  unitPriceCents Int    @map("unit_price_cents")
+  amount         Int    // quantity * unitPriceCents, in cents
+  sortOrder      Int    @default(0) @map("sort_order")
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("invoice_items")
+}
+
+model UserSettings {
+  id                    String  @id @default(uuid())
+  userId                String  @unique @map("user_id")
+  defaultIvaRate        Float   @default(22) @map("default_iva_rate")
+  defaultApplyRitenuta  Boolean @default(false) @map("default_apply_ritenuta")
+  defaultRitenutaRate   Float   @default(20) @map("default_ritenuta_rate")
+  defaultApplyCassa     Boolean @default(false) @map("default_apply_cassa")
+  defaultCassaRate      Float   @default(4) @map("default_cassa_rate")
+  defaultApplyBollo     Boolean @default(false) @map("default_apply_bollo")
+  defaultPaymentTerms   String? @map("default_payment_terms")
+  invoicePrefix         String  @default("FT") @map("invoice_prefix")
+  theme                 String  @default("system")
+  locale                String  @default("it")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}

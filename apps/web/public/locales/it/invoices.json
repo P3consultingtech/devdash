@@ -1,0 +1,62 @@
+{
+  "title": "Fatture",
+  "addInvoice": "Nuova Fattura",
+  "editInvoice": "Modifica Fattura",
+  "invoiceDetail": "Dettaglio Fattura",
+  "deleteInvoice": "Elimina Fattura",
+  "deleteConfirm": "Sei sicuro di voler eliminare questa fattura?",
+  "noInvoices": "Nessuna fattura trovata. Crea la tua prima fattura!",
+  "downloadPdf": "Scarica PDF",
+  "duplicate": "Duplica",
+  "fields": {
+    "number": "Numero",
+    "client": "Cliente",
+    "issueDate": "Data Emissione",
+    "dueDate": "Data Scadenza",
+    "status": "Stato",
+    "subtotal": "Imponibile",
+    "cassaRate": "Aliquota Cassa (%)",
+    "cassaAmount": "Cassa Previdenziale",
+    "taxableBase": "Base Imponibile",
+    "ivaRate": "Aliquota IVA (%)",
+    "ivaAmount": "IVA",
+    "bolloAmount": "Bollo Virtuale",
+    "grossTotal": "Totale Lordo",
+    "ritenutaRate": "Aliquota Ritenuta (%)",
+    "ritenutaAmount": "Ritenuta d'Acconto",
+    "netPayable": "Netto a Pagare",
+    "notes": "Note",
+    "paymentTerms": "Modalità di Pagamento"
+  },
+  "taxOptions": {
+    "applyRitenuta": "Applica Ritenuta d'Acconto",
+    "applyCassa": "Applica Cassa Previdenziale",
+    "applyBollo": "Applica Bollo Virtuale (€2,00)"
+  },
+  "items": {
+    "title": "Righe Fattura",
+    "description": "Descrizione",
+    "quantity": "Qtà",
+    "unitPrice": "Prezzo Unitario",
+    "amount": "Importo",
+    "addItem": "Aggiungi Riga"
+  },
+  "status": {
+    "DRAFT": "Bozza",
+    "SENT": "Inviata",
+    "PAID": "Pagata",
+    "OVERDUE": "Scaduta",
+    "CANCELLED": "Annullata"
+  },
+  "statusActions": {
+    "markSent": "Segna come Inviata",
+    "markPaid": "Segna come Pagata",
+    "markOverdue": "Segna come Scaduta",
+    "markCancelled": "Annulla"
+  },
+  "created": "Fattura creata con successo",
+  "updated": "Fattura aggiornata con successo",
+  "deleted": "Fattura eliminata con successo",
+  "statusUpdated": "Stato fattura aggiornato",
+  "duplicated": "Fattura duplicata con successo"
+}

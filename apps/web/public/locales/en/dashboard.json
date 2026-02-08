@@ -1,0 +1,33 @@
+{
+  "title": "Dashboard",
+  "welcome": "Welcome, {{name}}",
+  "kpi": {
+    "totalRevenue": "Revenue",
+    "outstanding": "Outstanding",
+    "overdue": "Overdue",
+    "totalClients": "Clients",
+    "totalInvoices": "Invoices",
+    "paidInvoices": "Paid"
+  },
+  "charts": {
+    "monthlyRevenue": "Monthly Revenue",
+    "invoicesByStatus": "Invoices by Status",
+    "topClients": "Top Clients",
+    "recentActivity": "Recent Activity"
+  },
+  "months": {
+    "1": "Jan",
+    "2": "Feb",
+    "3": "Mar",
+    "4": "Apr",
+    "5": "May",
+    "6": "Jun",
+    "7": "Jul",
+    "8": "Aug",
+    "9": "Sep",
+    "10": "Oct",
+    "11": "Nov",
+    "12": "Dec"
+  },
+  "noData": "No data available for the selected period"
+}

@@ -1,0 +1,60 @@
+{
+  "title": "Impostazioni",
+  "tabs": {
+    "profile": "Profilo",
+    "business": "Info Azienda",
+    "invoiceDefaults": "Default Fatture",
+    "appearance": "Aspetto"
+  },
+  "profile": {
+    "title": "Profilo Utente",
+    "firstName": "Nome",
+    "lastName": "Cognome",
+    "email": "Email",
+    "saved": "Profilo aggiornato"
+  },
+  "business": {
+    "title": "Informazioni Azienda",
+    "businessName": "Ragione Sociale",
+    "partitaIva": "Partita IVA",
+    "codiceFiscale": "Codice Fiscale",
+    "codiceDestinatario": "Codice Destinatario SDI",
+    "pec": "PEC",
+    "regimeFiscale": "Regime Fiscale",
+    "street": "Indirizzo",
+    "city": "Città",
+    "province": "Provincia",
+    "postalCode": "CAP",
+    "country": "Paese",
+    "phone": "Telefono",
+    "email": "Email",
+    "iban": "IBAN",
+    "saved": "Informazioni azienda aggiornate"
+  },
+  "invoiceDefaults": {
+    "title": "Default Fatture",
+    "defaultIvaRate": "Aliquota IVA predefinita (%)",
+    "defaultApplyRitenuta": "Applica ritenuta d'acconto",
+    "defaultRitenutaRate": "Aliquota ritenuta (%)",
+    "defaultApplyCassa": "Applica cassa previdenziale",
+    "defaultCassaRate": "Aliquota cassa (%)",
+    "defaultApplyBollo": "Applica bollo virtuale",
+    "defaultPaymentTerms": "Modalità di pagamento",
+    "invoicePrefix": "Prefisso fattura",
+    "saved": "Default fatture aggiornati"
+  },
+  "appearance": {
+    "title": "Aspetto",
+    "theme": "Tema",
+    "language": "Lingua",
+    "themes": {
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "system": "Sistema"
+    },
+    "languages": {
+      "it": "Italiano",
+      "en": "English"
+    }
+  }
+}

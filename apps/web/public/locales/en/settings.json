@@ -1,0 +1,60 @@
+{
+  "title": "Settings",
+  "tabs": {
+    "profile": "Profile",
+    "business": "Business Info",
+    "invoiceDefaults": "Invoice Defaults",
+    "appearance": "Appearance"
+  },
+  "profile": {
+    "title": "User Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "saved": "Profile updated"
+  },
+  "business": {
+    "title": "Business Information",
+    "businessName": "Business Name",
+    "partitaIva": "VAT Number (P.IVA)",
+    "codiceFiscale": "Tax Code (C.F.)",
+    "codiceDestinatario": "SDI Recipient Code",
+    "pec": "Certified Email (PEC)",
+    "regimeFiscale": "Tax Regime",
+    "street": "Street",
+    "city": "City",
+    "province": "Province",
+    "postalCode": "Postal Code",
+    "country": "Country",
+    "phone": "Phone",
+    "email": "Email",
+    "iban": "IBAN",
+    "saved": "Business information updated"
+  },
+  "invoiceDefaults": {
+    "title": "Invoice Defaults",
+    "defaultIvaRate": "Default VAT Rate (%)",
+    "defaultApplyRitenuta": "Apply withholding tax",
+    "defaultRitenutaRate": "Withholding rate (%)",
+    "defaultApplyCassa": "Apply social security fund",
+    "defaultCassaRate": "Social security rate (%)",
+    "defaultApplyBollo": "Apply revenue stamp",
+    "defaultPaymentTerms": "Payment terms",
+    "invoicePrefix": "Invoice prefix",
+    "saved": "Invoice defaults updated"
+  },
+  "appearance": {
+    "title": "Appearance",
+    "theme": "Theme",
+    "language": "Language",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "languages": {
+      "it": "Italiano",
+      "en": "English"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "title": "Clienti",
+  "addClient": "Nuovo Cliente",
+  "editClient": "Modifica Cliente",
+  "clientDetail": "Dettaglio Cliente",
+  "deleteClient": "Elimina Cliente",
+  "deleteConfirm": "Sei sicuro di voler eliminare questo cliente?",
+  "noClients": "Nessun cliente trovato. Crea il tuo primo cliente!",
+  "fields": {
+    "name": "Nome / Ragione Sociale",
+    "type": "Tipo",
+    "email": "Email",
+    "phone": "Telefono",
+    "partitaIva": "Partita IVA",
+    "codiceFiscale": "Codice Fiscale",
+    "codiceDestinatario": "Codice Destinatario SDI",
+    "pec": "PEC",
+    "street": "Indirizzo",
+    "city": "Città",
+    "province": "Provincia",
+    "postalCode": "CAP",
+    "country": "Paese",
+    "notes": "Note"
+  },
+  "types": {
+    "BUSINESS": "Azienda",
+    "FREELANCER": "Libero Professionista",
+    "INDIVIDUAL": "Privato"
+  },
+  "recentInvoices": "Fatture Recenti",
+  "created": "Cliente creato con successo",
+  "updated": "Cliente aggiornato con successo",
+  "deleted": "Cliente eliminato con successo"
+}

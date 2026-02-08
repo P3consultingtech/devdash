@@ -1,0 +1,40 @@
+{
+  "appName": "DevDash",
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create",
+  "search": "Search...",
+  "actions": "Actions",
+  "confirm": "Confirm",
+  "back": "Back",
+  "next": "Next",
+  "previous": "Previous",
+  "yes": "Yes",
+  "no": "No",
+  "noResults": "No results found",
+  "error": "Error",
+  "success": "Success",
+  "required": "Required field",
+  "invalidEmail": "Invalid email",
+  "nav": {
+    "dashboard": "Dashboard",
+    "clients": "Clients",
+    "invoices": "Invoices",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "pagination": {
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "to": "to",
+    "results": "results"
+  },
+  "deleteConfirm": {
+    "title": "Confirm deletion",
+    "message": "Are you sure you want to delete this item? This action cannot be undone."
+  }
+}
