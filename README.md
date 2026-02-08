@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="#features">Features</a> · <a href="#quick-start">Quick Start</a> · <a href="#tech-stack">Tech Stack</a> · <a href="#documentation">Docs</a> · <a href="#license">License</a>
+  <a href="#features">Features</a> · <a href="#screenshots">Screenshots</a> · <a href="#quick-start">Quick Start</a> · <a href="#tech-stack">Tech Stack</a> · <a href="#documentation">Docs</a> · <a href="#license">License</a>
 </p>
 
 ---
@@ -18,6 +18,59 @@
 > **Un progetto ideato da [P3consulting.tech](https://p3consulting.tech)**
 
 ---
+
+## Screenshots
+
+<details>
+<summary><strong>Dashboard</strong> — KPI, grafici fatturato, stato fatture, top clienti, attività recente</summary>
+
+![Dashboard](docs/screenshots/03-dashboard.png)
+
+</details>
+
+<details>
+<summary><strong>Fatture</strong> — Lista con stato, dettaglio fattura, creazione nuova fattura</summary>
+
+![Fatture - Lista](docs/screenshots/04-invoices-list.png)
+![Fatture - Dettaglio](docs/screenshots/05-invoice-detail.png)
+![Fatture - Nuova](docs/screenshots/06-invoice-form.png)
+
+</details>
+
+<details>
+<summary><strong>Clienti</strong> — Anagrafica clienti con dati fiscali italiani</summary>
+
+![Clienti - Lista](docs/screenshots/07-clients-list.png)
+![Clienti - Dettaglio](docs/screenshots/08-client-detail.png)
+![Clienti - Nuovo](docs/screenshots/09-client-form.png)
+
+</details>
+
+<details>
+<summary><strong>Impostazioni</strong> — Profilo, dati azienda, default fatture</summary>
+
+![Impostazioni - Profilo](docs/screenshots/10-settings-profile.png)
+![Impostazioni - Azienda](docs/screenshots/11-settings-business.png)
+![Impostazioni - Default Fatture](docs/screenshots/12-settings-defaults.png)
+
+</details>
+
+<details>
+<summary><strong>Dark Mode</strong> — Tema scuro su tutte le pagine</summary>
+
+![Dark - Dashboard](docs/screenshots/14-dashboard-dark.png)
+![Dark - Fatture](docs/screenshots/15-invoices-dark.png)
+![Dark - Clienti](docs/screenshots/16-clients-dark.png)
+
+</details>
+
+<details>
+<summary><strong>Auth</strong> — Login e registrazione</summary>
+
+![Login](docs/screenshots/02-login.png)
+![Registrazione](docs/screenshots/01-register.png)
+
+</details>
 
 ## Features
 
@@ -35,12 +88,12 @@
 
 ## Tech Stack
 
-| Layer | Tecnologie |
-|-------|-----------|
+| Layer        | Tecnologie                                                                                                                           |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
 | **Frontend** | React 19, Vite 6, TypeScript, Tailwind CSS 4, shadcn/ui, TanStack Query 5, Zustand 5, React Hook Form + Zod, react-i18next, Recharts |
-| **Backend** | Node.js, Express 5, Prisma 6, PostgreSQL 17, JWT auth (access + refresh), PDFKit, Zod validation |
-| **Shared** | `packages/shared` — Tipi TypeScript e schemi Zod condivisi tra frontend e backend |
-| **Infra** | Docker Compose, Nginx, GitHub Actions CI |
+| **Backend**  | Node.js, Express 5, Prisma 6, PostgreSQL 17, JWT auth (access + refresh), PDFKit, Zod validation                                     |
+| **Shared**   | `packages/shared` — Tipi TypeScript e schemi Zod condivisi tra frontend e backend                                                    |
+| **Infra**    | Docker Compose, Nginx, GitHub Actions CI                                                                                             |
 
 ## Quick Start
 
@@ -78,10 +131,10 @@ pnpm dev
 
 L'app sarà disponibile su:
 
-| Servizio | URL |
-|----------|-----|
-| Frontend | http://localhost:5173 |
-| API | http://localhost:3001 |
+| Servizio       | URL                                |
+| -------------- | ---------------------------------- |
+| Frontend       | http://localhost:5173              |
+| API            | http://localhost:3001              |
 | **Demo login** | `demo@devdash.dev` / `password123` |
 
 ### Produzione (Docker)
@@ -141,13 +194,13 @@ Tutti gli importi sono memorizzati in **centesimi** (interi) per evitare errori 
 
 Base URL: `/api/v1`
 
-| Modulo | Endpoints |
-|--------|-----------|
-| **Auth** | `POST register, login, refresh, logout` · `GET me` |
-| **Clients** | `GET list` (paginato, filtri, search) · `GET :id` · `POST` · `PUT :id` · `DELETE :id` (soft) · `GET export` (CSV) |
-| **Invoices** | `GET list` · `GET :id` · `POST` · `PUT :id` (solo DRAFT) · `DELETE :id` (solo DRAFT) · `PATCH :id/status` · `POST :id/duplicate` · `GET :id/pdf` · `GET next-number` · `GET export` (CSV) |
-| **Dashboard** | `GET summary, revenue, invoices-by-status, top-clients, recent-activity` |
-| **Settings** | `GET/PUT profile, business, preferences` · `POST logo` · `DELETE logo` |
+| Modulo        | Endpoints                                                                                                                                                                                 |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auth**      | `POST register, login, refresh, logout` · `GET me`                                                                                                                                        |
+| **Clients**   | `GET list` (paginato, filtri, search) · `GET :id` · `POST` · `PUT :id` · `DELETE :id` (soft) · `GET export` (CSV)                                                                         |
+| **Invoices**  | `GET list` · `GET :id` · `POST` · `PUT :id` (solo DRAFT) · `DELETE :id` (solo DRAFT) · `PATCH :id/status` · `POST :id/duplicate` · `GET :id/pdf` · `GET next-number` · `GET export` (CSV) |
+| **Dashboard** | `GET summary, revenue, invoices-by-status, top-clients, recent-activity`                                                                                                                  |
+| **Settings**  | `GET/PUT profile, business, preferences` · `POST logo` · `DELETE logo`                                                                                                                    |
 
 Consulta la [documentazione API completa](docs/API.md) per i dettagli.
 
