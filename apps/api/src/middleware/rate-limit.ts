@@ -1,9 +1,19 @@
 import rateLimit from 'express-rate-limit';
+import type { Request } from 'express';
 
-/** General API rate limiter: 100 requests per 15 minutes per IP. */
+/**
+ * Key generator that uses userId for authenticated requests,
+ * falling back to IP for unauthenticated ones.
+ */
+function userOrIpKey(req: Request): string {
+  return req.userId || req.ip || 'unknown';
+}
+
+/** General API rate limiter: 100 requests per 15 minutes per user/IP. */
 export const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 100,
+  keyGenerator: userOrIpKey,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -17,7 +27,7 @@ export const apiLimiter = rateLimit({
  * Applied to login and register endpoints to prevent brute-force attacks.
  */
 export const strictAuthLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 5,
   standardHeaders: true,
   legacyHeaders: false,
@@ -42,10 +52,11 @@ export const authLimiter = rateLimit({
   },
 });
 
-/** PDF generation rate limiter: 10 requests per 15 minutes per IP. */
+/** PDF generation rate limiter: 10 requests per 15 minutes per user/IP. */
 export const pdfLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 10,
+  keyGenerator: userOrIpKey,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

@@ -3,6 +3,7 @@ import * as invoicesService from './invoices.service';
 import { generateInvoicePdf } from '../pdf/pdf.service';
 import { toCsv } from '../../utils/csv';
 import { formatCurrency } from '@devdash/shared';
+import { audit } from '../../utils/audit';
 
 export async function list(req: Request, res: Response) {
   const result = await invoicesService.listInvoices(req.userId!, req.query as any);
@@ -16,6 +17,13 @@ export async function getById(req: Request, res: Response) {
 
 export async function create(req: Request, res: Response) {
   const invoice = await invoicesService.createInvoice(req.userId!, req.body);
+  audit({
+    userId: req.userId!,
+    action: 'CREATE',
+    entity: 'Invoice',
+    entityId: invoice.id,
+    ipAddress: req.ip,
+  });
   res.status(201).json({ success: true, data: invoice });
 }
 
@@ -30,6 +38,13 @@ export async function update(req: Request, res: Response) {
 
 export async function remove(req: Request, res: Response) {
   await invoicesService.deleteInvoice(req.userId!, req.params.id as string);
+  audit({
+    userId: req.userId!,
+    action: 'DELETE',
+    entity: 'Invoice',
+    entityId: req.params.id,
+    ipAddress: req.ip,
+  });
   res.json({ success: true });
 }
 
@@ -39,6 +54,14 @@ export async function updateStatus(req: Request, res: Response) {
     req.params.id as string,
     req.body.status,
   );
+  audit({
+    userId: req.userId!,
+    action: 'STATUS_CHANGE',
+    entity: 'Invoice',
+    entityId: invoice.id,
+    details: { to: req.body.status },
+    ipAddress: req.ip,
+  });
   res.json({ success: true, data: invoice });
 }
 

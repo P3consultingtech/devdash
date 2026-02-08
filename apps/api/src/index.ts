@@ -18,8 +18,27 @@ import { markOverdueInvoices } from './modules/invoices/invoices.service';
 
 const app = express();
 
+// Trust first proxy (Nginx) for correct client IP in rate limiting and logs
+app.set('trust proxy', 1);
+
 // Security headers (must be first)
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        fontSrc: ["'self'"],
+        connectSrc: ["'self'"],
+        frameAncestors: ["'none'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+      },
+    },
+  }),
+);
 
 // Global middleware
 app.use(corsMiddleware);

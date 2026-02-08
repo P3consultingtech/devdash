@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '@/components/layouts/MainLayout';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
+import { RouteErrorBoundary } from '@/components/shared/RouteErrorBoundary';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { DashboardPage } from '@/features/dashboard/pages/DashboardPage';
@@ -16,27 +17,58 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     path: '/register',
     element: <RegisterPage />,
+    errorElement: <RouteErrorBoundary />,
   },
   {
     element: <ProtectedRoute />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         element: <MainLayout />,
         children: [
-          { path: '/', element: <DashboardPage /> },
-          { path: '/clients', element: <ClientsListPage /> },
-          { path: '/clients/new', element: <ClientFormPage /> },
-          { path: '/clients/:id', element: <ClientDetailPage /> },
-          { path: '/clients/:id/edit', element: <ClientFormPage /> },
-          { path: '/invoices', element: <InvoicesListPage /> },
-          { path: '/invoices/new', element: <InvoiceFormPage /> },
-          { path: '/invoices/:id', element: <InvoiceDetailPage /> },
-          { path: '/invoices/:id/edit', element: <InvoiceFormPage /> },
-          { path: '/settings', element: <SettingsPage /> },
+          { path: '/', element: <DashboardPage />, errorElement: <RouteErrorBoundary /> },
+          { path: '/clients', element: <ClientsListPage />, errorElement: <RouteErrorBoundary /> },
+          {
+            path: '/clients/new',
+            element: <ClientFormPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          {
+            path: '/clients/:id',
+            element: <ClientDetailPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          {
+            path: '/clients/:id/edit',
+            element: <ClientFormPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          {
+            path: '/invoices',
+            element: <InvoicesListPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          {
+            path: '/invoices/new',
+            element: <InvoiceFormPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          {
+            path: '/invoices/:id',
+            element: <InvoiceDetailPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          {
+            path: '/invoices/:id/edit',
+            element: <InvoiceFormPage />,
+            errorElement: <RouteErrorBoundary />,
+          },
+          { path: '/settings', element: <SettingsPage />, errorElement: <RouteErrorBoundary /> },
         ],
       },
     ],

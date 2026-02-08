@@ -22,6 +22,7 @@ model User {
   invoices        Invoice[]
   settings        UserSettings?
   refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]
 
   @@map("users")
 }
@@ -186,4 +187,32 @@ model UserSettings {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_settings")
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  STATUS_CHANGE
+  LOGIN
+  LOGIN_FAILED
+  LOGOUT
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  userId     String?     @map("user_id")
+  action     AuditAction
+  entity     String      // e.g. "Invoice", "Client", "Settings"
+  entityId   String?     @map("entity_id")
+  details    Json?       // additional context (e.g. { from: "DRAFT", to: "SENT" })
+  ipAddress  String?     @map("ip_address")
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }
